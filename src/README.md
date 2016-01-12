@@ -6,4 +6,4 @@
 - **AVR-Studio**: The original sources as programmed into the ATMEGA328 that came with
   version 2.2 of the 23CM NBFM transceiver. These sources are here for reference only.
   The ownership and source control is managed by the original owner, please contact 
-  [http://www.pe1jpd.nl/index.php/23cm_nbfm/](Bas PE1JPD) for the latest version or questions.
+  [Bas PE1JPD](http://www.pe1jpd.nl/index.php/23cm_nbfm/) for the latest version or questions.

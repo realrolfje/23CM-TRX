@@ -11,7 +11,15 @@
  * This software will give your 23cm Transceiver:
  * - An Arduino-based project, for easy modification.
  * 
+ * Arduino project on atmega with internal oscillator
+ * http://waihung.net/using-internal-oscillator-on-atmega328p/
+ * 
+ * Creating a board definition with correct fuses and ISP:
+ * http://www.open-electronics.org/arduino-isp-in-system-programming-and-stand-alone-circuits/
+ *
  */
+
+ // 8MHz osc / 8 = 1MHz.
  
 void setup() {
   setupSubAudio();

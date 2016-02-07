@@ -52,11 +52,11 @@ void setupSubAudio() {
   stopTone();
 }
 
-boolean audioPin=false;
-
+/* Flipping an internal bit is faster than flipping a port */
+boolean audioBit=false;
 void flipAudioAubaudio_pin(){
-  audioPin != audioPin;
-  digitalWrite(subaudio_pin, audioPin);
+  audioBit != audioBit;
+  digitalWrite(subaudio_pin, audioBit);
 }
 
 void setTone(float frequencyHz){

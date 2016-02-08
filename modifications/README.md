@@ -40,7 +40,7 @@ schematic above, and re-use the 2M2 resistor to connect the output to R16 at the
 
 In my transceiver, it looks like this:
 
-![sub-audio modification](images/subaudio-mod-photo.png)
+![sub-audio modification photo](images/subaudio-mod-photo.jpg)
 
 Power on the transceiver, select a sub-audio tone and connect an oscilloscope to the runner
 of the potentiometer. When transmitting, adjust the output at the runner to 1.2 Vpp. It

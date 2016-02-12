@@ -6,7 +6,32 @@ transceivers.
 
 ## Gotchas, problems and solutions
 
+We had the following problems/defects when building the kit:
+- The BF199 had a mirrored pinout. Some batches of BF199 transistors are incorrectly
+  produced. If you insert these in the print it appears to be broken. (will be documented later)
+- IC3, the 80MHz oscillator was defective
+- Some kits have the Y17C VCO instead of the ALPS1679C. It is pin compatible, but the
+  manufacturer has numbered its pins differently, so it is unclear how to mount this VCO.
+  (will be documented later)
+- Output signal was 2MHz wide. Monitoring the CP (Charge Pump) pin of the PLL, we noticed
+  that the PLL was violently trying to keep the VCO on the Tx frequency, causing 400mV spikes
+  on the Vtune pin of the Y17C VCO. We suspect a lower input impedance on the Y17C causes
+  this. If you have this problem, a 100nF capacitor paralel to C36 will solve it. Please
+  check your modulation after this modification.
+- When transmitting, the voltage over D3, the 5v6 zener, drops to less than 4 Volts. R37
+  heats up to the point it is too hot to touch.
+- Heat, mainly from the CLY5 and R37 causes the 12MHz Chrystal (X2) to drift a bit. The 
+  12MHz is multiplied over 100 times. This also increases this drift 100 times. For a 
+  stable output frequency, a TCXO is strongly recommended. (will be documented later)
+- A few of the through-hole capacitors turned out to have low resistance to ground. This
+  might be caused by the heat needed to solder them to the casing. These almost-shorts
+  caused strange problems. At first it seemed that the rotary encoder was broken, but it
+  turned out to be a through-hole capacitor. Later the LCD panel started showing incorrect
+  characters. This also was caused by one of the through-hole capacitors.
+
+
 ## Modifications and improvements.
+
 
 ### Remove receiver audio rumbling
 

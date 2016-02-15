@@ -1,66 +1,34 @@
 /*
- * Valid subaudio frequencies:
- * 67.0
- * 69.3
- * 71.9
- * 74.4
- * 77.0
- * 79.7
- * 82.5
- * 85.4
- * 88.5
- * 91.5
- * 94.8
- * 97.4
- * 100.0
- * 103.5
- * 107.2
- * 110.9
- * 114.8
- * 118.8
- * 123.0
- * 127.3
- * 131.8
- * 136.5
- * 141.3
- * 146.2
- * 151.4
- * 156.7
- * 162.2
- * 167.9
- * 173.8
- * 179.9
- * 186.2
- * 192.8
- * 203.5
- * 210.7
- * 218.1
- * 225.7
- * 233.6
- * 241.8
- * 250.3
+ * Sub-audio related settings and functions.
  */
 #include <TimerOne.h>
 
 const byte subaudio_pin = 3;
 
-void setupSubAudio() {
-  Timer1.initialize();
-  Timer1.attachInterrupt(flipAudioAubaudio_pin);
+/* Valid subaudio frequencies, multiplied by 10. (885 means 88.5 Hz) */
+int freqTenthHz[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
+                      948,  974, 1000, 1035, 1072, 1109, 1148, 1188, 1230, 1273,
+                     1318, 1365, 1413, 1462, 1514, 1567, 1622, 1679, 1738, 1799,
+                     1862, 1928, 2035, 2107, 2181, 2257, 2336, 2418, 2503 };
 
+void setupSubAudio() {
   pinMode(subaudio_pin, OUTPUT); 
+  Timer1.initialize();
+  Timer1.attachInterrupt(flipAudioAubaudioPin);
+
   stopTone();
 }
 
 /* Flipping an internal bit is faster than flipping a port */
-boolean audioBit=false;
-void flipAudioAubaudio_pin(){
-  audioBit != audioBit;
+volatile boolean audioBit=false;
+void flipAudioAubaudioPin() {
+  audioBit = !audioBit;
   digitalWrite(subaudio_pin, audioBit);
 }
 
-void setTone(float frequencyHz){
-  long halfPeriodMicroSeconds = 1000000.0 / (frequencyHz*2);
+void setTone(int frequencyTenthHz) {
+  /* Period corrected for 16MHz Arduino plus ISR timer inaccuracy */
+  long halfPeriodMicroSeconds = 10012429 / (frequencyTenthHz * 2);
   Timer1.setPeriod(halfPeriodMicroSeconds);
   Timer1.start();
 }

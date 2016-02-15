@@ -1,6 +1,10 @@
 /*
  * Firmware for the PE1JPD 23cm TRX project.
  *
+ * PLEASE NOTE: SOFTWARE IS UNTESTED AND HAS NEVER RUN
+ * ON A 23CM TRANSCEIVER. THIS WARNING WILL BE REMOVED
+ * AFTER TESTING.
+ * 
  * This is an Ardiuno version of the firmware for the 
  * popular PE1JPD 23cm Transceiver. Information on how
  * to build this transceiver and where to get the parts
@@ -16,16 +20,14 @@
  * 
  * Creating a board definition with correct fuses and ISP:
  * http://www.open-electronics.org/arduino-isp-in-system-programming-and-stand-alone-circuits/
- *
+ * 
  */
 
- // 8MHz osc / 8 = 1MHz.
- 
 void setup() {
   setupSubAudio();
+  setTone(885);  // 88.5 Hz
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  setTone(88.5);
 }

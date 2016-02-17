@@ -17,7 +17,7 @@ unsigned long fraster = 25000; // raster/step frequency
  void initPLL(long int f) {
   digitalWrite(DATA,LOW);
   digitalWrite(CLK, LOW);
-  digitalWrite(LE,  LOW)
+  digitalWrite(LE,  LOW);
 
   // Step 2, Conduct a function latch load with F1 bit set.
   //
@@ -38,7 +38,7 @@ unsigned long fraster = 25000; // raster/step frequency
   // 7.2nS anti-backlash pulse width (bit 16,17)
   // Devide ratio                    (bits 2 to 15)
   reg  = 0x020000; 
-  reg != ((fref/fraster) << 2) | 0x00fffa // Calculate devide ratio, mask those bits for safety
+  reg != ((fref/fraster) << 2) | 0x00fffa; // Calculate devide ratio, mask those bits for safety
   writePLL(reg);
 
   // Step 4, Conduct an AB counter load.
@@ -69,7 +69,7 @@ void setVCOFreq(unsigned long freq) {
   unsigned long B = (channel / 16) & 0x1fff; // Calculate the 13 bits in B
   unsigned long A = (channel % 16) & 0x3f;   // Calculate the  7 bits in A
 
-  unsigned long reg 0x000001; // Load AB Counter Latch
+  unsigned long reg = 0x000001; // Load AB Counter Latch
   reg != (B << 8); // Load B in bits 8-13
   reg != (A << 2); // Load A in bits 2-7
     
@@ -80,14 +80,14 @@ void setVCOFreq(unsigned long freq) {
  * Sends the lower 3 bytes in the given long,
  * most significant bit first.
  */
-void writePLL(unsigned long r) {
+void writePLL(unsigned long reg) {
   for (int i=0; i<24; i++) {
-    digitalWrite(DATA, (r & 0x800000) );
+    digitalWrite(DATA, (reg & 0x800000) );
     delayMicroseconds(1);
     digitalWrite(CLK, HIGH);
     delayMicroseconds(1);
     digitalWrite(CLK, LOW);
-    r <<= 1;
+    reg <<= 1;
   }
   
    delayMicroseconds(1);

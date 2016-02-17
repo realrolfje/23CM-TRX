@@ -1,9 +1,7 @@
 /*
  * Routines for setting the PLL frequency.
  * 
- * The PLL is working as follows: 
- * 
- * fvco = (P*B + A)*REFin/R
+ * The PLL is working as follows:  fvco = (P*B + A)*REFin/R
  * 
  * where
  *  fvco = output frequency of external voltage controlled oscillator (VCO).
@@ -14,19 +12,16 @@
  *     R = preset divide ratio of binary 14-bit programmable reference counter (1 to 16,383).
  *         The devide ratio is chosen to match the step/raster size e.g 25000, but this is arbitrary.
  * 
- * If P = 16, and R = 25000, we need to do two calculations to get B and A from fvco:
- * 
+ * If P and R are known, we need to do the following calculations to get B and A from fvco:
  * B = (fvco/R) / P (note: int, so truncated at decimal point)
  * A = (fvco/R) % P (the remainer to do without prescaler P)
  * 
- * If we want fvco to be 1298.375 MHz, we need to set A and B to:
- * 
+ * To set fvco to 1298.375 MHz, having P = 16 and R = 25000 we need to set A and B to:
  * B = (1298375000 / 25000) / 16 = 3245
  * A = (1298375000 / 25000) % 16 = 15
- * 
  */
 
-#define LE       PC2
+#define LE        PC2
 #define DATA      PC1
 #define CLK       PC0
 

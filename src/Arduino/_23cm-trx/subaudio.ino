@@ -1,5 +1,14 @@
 /*
  * Sub-audio related settings and functions.
+ * 
+ * Usage: 
+ * 
+ * Call setupSubAudio(); once in your setup();
+ * 
+ * To output a 88.5 Hz subaudio tone, use setTone(885);
+ * To stop subaudio output, use stopTone();
+ * 
+ * Use freqTentHz[] as reference for valid subaudio tones.
  */
 #include <TimerOne.h>
 
@@ -35,5 +44,7 @@ void setTone(int frequencyTenthHz) {
 
 void stopTone(){
   Timer1.stop();
+  audiobit = false;
+  digitalWrite(subaudio_pin, audioBit);
 }
 

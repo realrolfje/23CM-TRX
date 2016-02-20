@@ -10,8 +10,11 @@
  * to build this transceiver and where to get the parts
  * are at: http://www.pe1jpd.nl/index.php/23cm_nbfm/
  * 
+ * This software is targeted at Board version 2.2, in the original
+ * software indicated as BOARD2 on line 13 of 23nbfm21.c.
+ * 
  * Developed using Arduini IDE 1.6.7 on OSX 10.10.5 (Yosemite).
- *
+ * 
  * This software will give your 23cm Transceiver:
  * - An Arduino-based project, for easy modification.
  * 

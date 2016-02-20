@@ -1,0 +1,136 @@
+/*
+ * Routines for setting the PLL frequency.
+ * 
+ * The PLL is working as follows:  fvco = (P*B + A)*REFin/R
+ * 
+ * where
+ *  fvco = output frequency of external voltage controlled oscillator (VCO).
+ *     P = preset modulus of dual-modulus prescaler. (16 in our case)
+ *     B = preset divide ratio of binary 13-bit counter (3 to 8191).
+ *     A = preset divide ratio of binary 6-bit swallow counter (0 to 63).
+ * REFin = output frequency of the external reference frequency oscillator (12.8 MHz)
+ *     R = preset divide ratio of binary 14-bit programmable reference counter (1 to 16,383).
+ *         The devide ratio is chosen to match the step/raster size e.g 25000, but this is arbitrary.
+ * 
+ * If P and R are known, we need to do the following calculations to get B and A from fvco:
+ * B = (fvco/R) / P (note: int, so truncated at decimal point)
+ * A = (fvco/R) % P (the remainer to do without prescaler P)
+ * 
+ * To set fvco to 1298.375 MHz, having P = 16 and R = 25000 we need to set A and B to:
+ * B = (1298375000 / 25000) / 16 = 3245
+ * A = (1298375000 / 25000) % 16 = 15
+ */
+
+#define LE        PC2
+#define DATA      PC1
+#define CLK       PC0
+
+const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
+
+unsigned long fref = 12800000; // reference frequency from the TCXO
+unsigned long fraster = 25000; // raster/step frequency
+
+/*
+ * Initialize the PLL using the "Counter Reset Method" as
+ * described on page 14 of the datasheet, ADF4113HV.pdf
+ */
+ void initPLL(unsigned long raster) {
+  fraster = raster;
+  
+  digitalWrite(DATA,LOW);
+  digitalWrite(CLK, LOW);
+  digitalWrite(LE,  LOW);
+
+  // Step 2, Conduct a function latch load with F1 bit set.
+  //
+  // Set function latch (bits 0,1):
+  // - Hold R/A/B counters on reset (F1, bit 2)
+  // - Normal power                 (bit 3)
+  // - Three state muxout           (bit 4,5,6)
+  // - Positive Phase detection     (bit 7)
+  // - Three-state Charge pump      (bit 8)
+  // - High current Charge pump     (bits 15,16,17)
+  // - Prescaler 16/17              (bits 22,23)
+  unsigned long reg = 0x438086; 
+  writePLL(reg);
+    
+  // Step 3, Conduct an R counter load.
+  //
+  // Set reference counter latch     (bit 0,1):
+  // 7.2nS anti-backlash pulse width (bit 16,17)
+  // Devide ratio                    (bits 2 to 15)
+  reg  = 0x020000; 
+  reg |= ((fref/fraster) << 2) | 0x00fffa; // Calculate devide ratio, mask those bits for safety
+  writePLL(reg);
+
+  // Step 4, Conduct an AB counter load (set any frequency)
+  setVCOFreq(1298000000);
+
+  // Step 5, conduct a function latch load with F1 bit cleared
+  //
+  // Set function latch (bits 0,1):
+  // - Normal R/A/B counters on reset (F1, bit 2)
+  // - Normal power                   (bit 3)
+  // - Three state muxout             (bit 4,5,6)
+  // - Positive Phase detection       (bit 7)
+  // - Three-state Charge pump        (bit 8)
+  // - High current Charge pump       (bits 15,16,17)
+  // - Prescaler 16/17                (bits 22,23)
+  reg = 0x438082;
+  writePLL(reg);
+}
+
+/*
+ * Sets the transmission frequency.
+ * Call this when switching from Rx to Tx
+ */
+void setTxFreq(unsigned long txfreq){
+  setVCOFreq(txfreq);
+}
+
+/*
+ * Sets the reception frequency.
+ * Call this when switching from Tx to Rx
+ */
+void setRxFreq(unsigned long rxfreq){
+  setVCOFreq(rxfreq - IF);
+}
+
+/*
+ * Sets the PLL A/B counters so that the PLL sets the output frequency
+ * of the VCO to the given frequency.
+ */
+void setVCOFreq(unsigned long freq) {
+  // At which raster slot is the given frequency
+  unsigned long channel = freq/fraster;
+
+  unsigned long B = (channel / 16) & 0x1fff; // Calculate the 13 bits in B
+  unsigned long A = (channel % 16) & 0x3f;   // Calculate the  7 bits in A
+
+  unsigned long reg = 0x000001; // Load AB Counter Latch
+  reg |= (B << 8); // Load B in bits 8-13
+  reg |= (A << 2); // Load A in bits 2-7
+    
+  writePLL(reg);
+}
+
+/*
+ * Sends the lower 3 bytes in the given long,
+ * most significant bit first.
+ */
+void writePLL(unsigned long reg) {
+  for (int i=0; i<24; i++) {
+    digitalWrite(DATA, (reg & 0x800000) );
+    delayMicroseconds(1);
+    digitalWrite(CLK, HIGH);
+    delayMicroseconds(1);
+    digitalWrite(CLK, LOW);
+    reg <<= 1;
+  }
+  
+   delayMicroseconds(1);
+   digitalWrite(LE,HIGH);
+   delayMicroseconds(1);
+   digitalWrite(LE,LOW);
+}
+

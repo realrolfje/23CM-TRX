@@ -25,6 +25,8 @@
 #define DATA      PC1
 #define CLK       PC0
 
+const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
+
 unsigned long fref = 12800000; // reference frequency from the TCXO
 unsigned long fraster = 25000; // raster/step frequency
 
@@ -76,6 +78,22 @@ unsigned long fraster = 25000; // raster/step frequency
   // - Prescaler 16/17                (bits 22,23)
   reg = 0x438082;
   writePLL(reg);
+}
+
+/*
+ * Sets the transmission frequency.
+ * Call this when switching from Rx to Tx
+ */
+void setTxFreq(unsigned long txfreq){
+  setVCOFreq(txfreq);
+}
+
+/*
+ * Sets the reception frequency.
+ * Call this when switching from Tx to Rx
+ */
+void setRxFreq(unsigned long rxfreq){
+  setVCOFreq(rxfreq - IF);
 }
 
 /*

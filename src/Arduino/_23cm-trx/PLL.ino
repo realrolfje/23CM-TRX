@@ -117,20 +117,23 @@ void setVCOFreq(unsigned long freq) {
 /*
  * Sends the lower 3 bytes in the given long,
  * most significant bit first.
+ * 
+ * No delays, as the CPU clock is 16Mhz. 
+ * See page 15: The maximum allowable serial clock rate is 20 MHz. 
+ * This means that the maximum update rate possible for the device 
+ * is 833 kHz, or one update every 1.2 μs. This rate is more than 
+ * adequate for systems that have typical lock times in the 
+ * hundreds of microseconds.
  */
 void writePLL(unsigned long reg) {
   for (int i=0; i<24; i++) {
     digitalWrite(DATA, (reg & 0x800000) );
-    delayMicroseconds(1);
     digitalWrite(CLK, HIGH);
-    delayMicroseconds(1);
     digitalWrite(CLK, LOW);
     reg <<= 1;
   }
   
-   delayMicroseconds(1);
    digitalWrite(LE,HIGH);
-   delayMicroseconds(1);
    digitalWrite(LE,LOW);
 }
 

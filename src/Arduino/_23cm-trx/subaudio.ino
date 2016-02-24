@@ -44,7 +44,7 @@ void setTone(int frequencyTenthHz) {
 
 void stopTone(){
   Timer1.stop();
-  audiobit = false;
+  audioBit = false;
   digitalWrite(subaudio_pin, audioBit);
 }
 

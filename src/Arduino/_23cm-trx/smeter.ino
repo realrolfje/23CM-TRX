@@ -5,38 +5,13 @@
 
 #define SMETER    PC2
 
- // define S-meter chars
-unsigned char smeter[3][8] = {
-  {0b00000,
-   0b00000,
-   0b10000,
-   0b10000,
-   0b10000,
-   0b10000,
-   0b10000,
-   0b00000},
-   
-  {0b00000,
-   0b00000,
-   0b10000,
-   0b10000,
-   0b10100,
-   0b10100,
-   0b10100,
-   0b00000},
-   
-  {0b00000,
-   0b00000,
-   0b10000,
-   0b10000,
-   0b10101,
-   0b10101,
-   0b10101,
-   0b00000}
-};
-
 unsigned long nextMeterUpdate = -1;
 const unsigned long meterUpdateMillis = 50;
+
+// 10 characters plus a null character 
+// so we can use it as a proper string.
+#define meterdisplaysize 10
+char meterdisplay[11] = "          ";
 
 int currentMeter = 0;
 
@@ -49,7 +24,19 @@ void updateSmeterDisplay() {
   }
 
   readFilteredMeter();
-    
+
+  int fullblocks = (currentMeter*meterdisplaysize)/1024;
+  int lastchar  = ((currentMeter*meterdisplaysize)%1024)/3;
+  for(int i=0; i<meterdisplaysize; i++){
+    if (i<=fullblocks){
+      meterdisplay[i]= 'X';
+    } else {
+      // TODO use the nice bar digits here
+      // TODO one of the digits is 3 bars (lastchar).
+      meterdisplay[i]= ' ';
+    }   
+  }
+
   nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
 

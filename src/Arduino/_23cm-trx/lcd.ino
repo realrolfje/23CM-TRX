@@ -1,8 +1,8 @@
 
-#define METER_CHAR_0 0
-#define METER_CHAR_1 1
-#define METER_CHAR_2 2
-#define METER_CHAR_3 3
+#define METER_CHAR_0 0 // :
+#define METER_CHAR_1 1 // |
+#define METER_CHAR_2 2 // ||
+#define METER_CHAR_3 3 // |||
 
 #define brightnessvalues_SIZE 8
 byte brightnessvalues[brightnessvalues_SIZE] = {5,15,30,55,105,155,205,255};

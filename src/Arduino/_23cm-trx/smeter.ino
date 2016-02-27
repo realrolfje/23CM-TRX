@@ -31,18 +31,8 @@ void updateSmeterDisplay() {
   }
 
   readFilteredMeter();
-
-  int fullblocks = (currentMeter*meterdisplaysize)/1024;
-  int lastchar  = ((currentMeter*meterdisplaysize)%1024)/3;
-  for(int i=0; i<meterdisplaysize; i++){
-    if (i<=fullblocks){
-      meterdisplay[i]= 'X';
-    } else {
-      // TODO use the nice bar digits here
-      // TODO one of the digits is 3 bars (lastchar).
-      meterdisplay[i]= ' ';
-    }   
-  }
+  buildMeterDisplayString();
+  writeMeterDisplay(0,0);
 
   nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
@@ -71,4 +61,26 @@ void readFilteredMeter() {
   currentMeter = currentMeter + ((sample - currentMeter) / nrSamples);
 }
 
+void buildMeterDisplayString() {
+  int fullblocks = (currentMeter*meterdisplaysize)/1024;
+  int lastchar  = ((currentMeter*meterdisplaysize)%1024)/3;
+  for(int i=0; i<meterdisplaysize; i++){
+    if (i<=fullblocks) {
+      meterdisplay[i] = METER_CHAR_3;
+    } else if (i==fullblocks+1) {
+      switch(lastchar) {
+        case 0: meterdisplay[i] = METER_CHAR_0;
+        case 1: meterdisplay[i] = METER_CHAR_1;
+        case 2: meterdisplay[i] = METER_CHAR_2;
+      }
+    } else {
+      meterdisplay[i]=METER_CHAR_0;
+    }
+  }
+}
+
+void writeMeterDisplay(byte col, byte row) {
+  lcd.setCursor(col,row);
+  lcd.print(meterdisplay);
+}
 

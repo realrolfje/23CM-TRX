@@ -26,6 +26,27 @@
  * 
  */
 
+/* Shared constants */
+
+#define PLL_LE        PC2
+#define PLL_DATA      PC1
+#define PLL_CLK       PC0
+
+#define SMETER        PC2
+
+#define lcdBacklightPin 10
+
+/* Includes and external libraries */
+#include <LiquidCrystal.h>
+
+
+/* Shared (global) variables */
+// initialize the library with the numbers of the interface pins
+//                rs E  D4 D5 D6 D7
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
+
+
 void setup() {
   setupSubAudio();
   setTone(885);  // 88.5 Hz

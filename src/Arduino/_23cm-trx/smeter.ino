@@ -2,16 +2,23 @@
  * Routines to sample the S signal and display an
  * S-meter on the dislay with fast attack and slow decay.
  */
-
-#define SMETER    PC2
-
 unsigned long nextMeterUpdate = -1;
 const unsigned long meterUpdateMillis = 50;
 
 // 10 characters plus a null character 
 // so we can use it as a proper string.
 #define meterdisplaysize 10
-char meterdisplay[11] = "          ";
+char meterdisplay[11] = 
+{ METER_CHAR_1,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_0,
+  METER_CHAR_1};
 
 int currentMeter = 0;
 

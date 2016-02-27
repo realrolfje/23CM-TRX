@@ -21,10 +21,6 @@
  * A = (1298375000 / 25000) % 16 = 15
  */
 
-#define LE        PC2
-#define DATA      PC1
-#define CLK       PC0
-
 const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
 
 unsigned long fref = 12800000; // reference frequency from the TCXO
@@ -37,9 +33,9 @@ unsigned long fraster = 25000; // raster/step frequency
  void initPLL(unsigned long raster) {
   fraster = raster;
   
-  digitalWrite(DATA,LOW);
-  digitalWrite(CLK, LOW);
-  digitalWrite(LE,  LOW);
+  digitalWrite(PLL_DATA,LOW);
+  digitalWrite(PLL_CLK, LOW);
+  digitalWrite(PLL_LE,  LOW);
 
   // Step 2, Conduct a function latch load with F1 bit set.
   //
@@ -125,13 +121,13 @@ void setVCOFreq(unsigned long freq) {
  * adequate for systems that have typical lock times in the 
  * hundreds of microseconds.
  */
-void writePLL(unsigned long reg) {
+void writePLL(unsigned long pll_word) {
   for (int i = 1; i < 3; i++) {
-    shiftOut(DATA,CLK,MSBFIRST,pll_word << i*8);
+    shiftOut(PLL_DATA, PLL_CLK, MSBFIRST, pll_word << i*8);
   }
   
-   digitalWrite(LE,HIGH);
-   digitalWrite(LE,LOW);
+   digitalWrite(PLL_LE,HIGH);
+   digitalWrite(PLL_LE,LOW);
 }
 
 

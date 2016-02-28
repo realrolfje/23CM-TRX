@@ -22,6 +22,21 @@ char meterdisplay[11] =
 
 int currentMeter = 0;
 
+void testSMeterDisplay(int value) {
+  unsigned long nowmillis = millis();
+  
+  if (nowmillis < nextMeterUpdate) {
+    // No update yet.
+    return;
+  }
+
+  updateFilteredMeter(value);
+  buildMeterDisplayString();
+  writeMeterDisplay(0,0);
+
+  nextMeterUpdate = nowmillis + meterUpdateMillis;
+}
+
 void updateSmeterDisplay() {
   unsigned long nowmillis = millis();
   
@@ -30,7 +45,7 @@ void updateSmeterDisplay() {
     return;
   }
 
-  readFilteredMeter();
+  updateFilteredMeter(analogRead(SMETER));
   buildMeterDisplayString();
   writeMeterDisplay(0,0);
 
@@ -41,8 +56,7 @@ void updateSmeterDisplay() {
  *  Fast attack, slow decay update of meter. Relative
  *  to the number of times this method is called.
  */
-void readFilteredMeter() {
-  int sample = analogRead(SMETER);
+void updateFilteredMeter(int sample) {
   
   /* 
    * The fictive number of samples in our buffer determines

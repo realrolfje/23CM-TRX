@@ -53,5 +53,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  int metervalue = 512 * (millis()/1000)%2;
+  testSMeterDisplay(metervalue);
 }

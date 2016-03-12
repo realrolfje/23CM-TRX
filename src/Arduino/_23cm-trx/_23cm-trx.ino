@@ -28,11 +28,13 @@
 
 /* Shared constants */
 
-#define PLL_LE        PC2
-#define PLL_DATA      PC1
-#define PLL_CLK       PC0
+#define PLL_LE        A5
+#define PLL_DATA      A4
+#define PLL_CLK       A3
+#define TX_ON         A2
 
-#define SMETER        PC2
+#define SMETER        A1
+#define MUTE          A0
 
 #define lcdBacklightPin 10
 

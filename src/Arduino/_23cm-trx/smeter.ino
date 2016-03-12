@@ -2,9 +2,11 @@
  * Routines to sample the S signal and display an
  * S-meter on the dislay with fast attack and slow decay.
  */
-unsigned long nextMeterUpdate = 0;
 const unsigned long meterUpdateMillis = 50;
 
+int mutelevel = 3;
+
+unsigned long nextMeterUpdate = 0;
 int currentMeter = 0;
 
 void testSMeterDisplay(int value) {
@@ -30,7 +32,7 @@ void updateSmeterDisplay() {
   }
 
   updateFilteredMeter(readRSSI());
-  writeSMeter(0,0);
+  writeSMeter(1,0);
 
   nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
@@ -66,7 +68,9 @@ void updateFilteredMeter(int sample) {
  * 1023 for strong signals
  */
 int readRSSI() {
-  return map(analogRead(SMETER),54, 1023, 1023,0);
+  int rssi = map(analogRead(SMETER),54, 1023, 1023,0);
+  digitalWrite(MUTE, rssi<(mutelevel*100));
+  return rssi;  
 }
 
 void writeSMeter(int row, int pos) {

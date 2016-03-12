@@ -31,7 +31,10 @@ unsigned long fraster = 25000; // raster/step frequency
  * Initialize the PLL using the "Counter Reset Method" as
  * described on page 14 of the datasheet, ADF4113HV.pdf
  */
- void initPLL(unsigned long raster) {
+void initPLL(unsigned long raster) {
+  Serial.print("Intialize PLL, raster ");
+  Serial.println(raster);
+  
   fraster = raster;
   
   digitalWrite(PLL_DATA,LOW);
@@ -84,6 +87,7 @@ unsigned long fraster = 25000; // raster/step frequency
 void setTxFreq(unsigned long txfreq){
   displayFrequency(txfreq);
   setVCOFreq(txfreq);
+  digitalWrite(TX_ON, HIGH); 
 }
 
 /*
@@ -91,6 +95,10 @@ void setTxFreq(unsigned long txfreq){
  * Call this when switching from Tx to Rx
  */
 void setRxFreq(unsigned long rxfreq){
+  Serial.print("Set RX Freq: ");
+  Serial.println(rxfreq);
+
+  digitalWrite(TX_ON, LOW); 
   displayFrequency(rxfreq);
   setVCOFreq(rxfreq - IF);
 }
@@ -100,6 +108,9 @@ void setRxFreq(unsigned long rxfreq){
  * of the VCO to the given frequency.
  */
 void setVCOFreq(unsigned long freq) {
+  Serial.print("Set VCO Freq: ");
+  Serial.println(freq);
+  
   // At which raster slot is the given frequency
   unsigned long channel = freq/fraster;
 
@@ -125,15 +136,21 @@ void setVCOFreq(unsigned long freq) {
  * hundreds of microseconds.
  */
 void writePLL(unsigned long pll_word) {
+  Serial.print("PLL word: ");
+  Serial.println(pll_word);
+  Serial.print("PLL bits: ");   
   for (int i = 0; i < 24; i++) {
-    boolean msb = pll_word & 0x800000;
+    boolean msb = (pll_word & 0x800000) ? true : false;
+    Serial.print(msb);
     digitalWrite(PLL_DATA, msb);
     digitalWrite(PLL_CLK,HIGH);
     digitalWrite(PLL_CLK,LOW);
+    pll_word <<= 1;
   }
   
    digitalWrite(PLL_LE,HIGH);
    digitalWrite(PLL_LE,LOW);
+   Serial.println();
 }
 
 

@@ -45,9 +45,9 @@ void displayFrequency(unsigned long freq){
   lcd.setCursor(5,0);
   lcd.print("000 MHz");
   lcd.setCursor(0,0);
-  lcd.print(freq / 1000);
+  lcd.print(freq / 1000000);
   lcd.print(".");
-  lcd.print(freq % 1000);
+  lcd.print((freq % 1000000) / 1000);
 }
 
 void createLCDCharacters(){

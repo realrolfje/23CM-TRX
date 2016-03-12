@@ -26,6 +26,7 @@ const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
 unsigned long fref = 12800000; // reference frequency from the TCXO
 unsigned long fraster = 25000; // raster/step frequency
 
+
 /*
  * Initialize the PLL using the "Counter Reset Method" as
  * described on page 14 of the datasheet, ADF4113HV.pdf
@@ -81,6 +82,7 @@ unsigned long fraster = 25000; // raster/step frequency
  * Call this when switching from Rx to Tx
  */
 void setTxFreq(unsigned long txfreq){
+  displayFrequency(txfreq);
   setVCOFreq(txfreq);
 }
 
@@ -89,6 +91,7 @@ void setTxFreq(unsigned long txfreq){
  * Call this when switching from Tx to Rx
  */
 void setRxFreq(unsigned long rxfreq){
+  displayFrequency(rxfreq);
   setVCOFreq(rxfreq - IF);
 }
 

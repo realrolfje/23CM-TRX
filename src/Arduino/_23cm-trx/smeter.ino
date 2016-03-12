@@ -33,7 +33,7 @@ void updateSmeterDisplay() {
     return;
   }
 
-  updateFilteredMeter(analogRead(SMETER));
+  updateFilteredMeter(readRSSI());
   writeSMeter(0,0);
 
   nextMeterUpdate = nowmillis + meterUpdateMillis;
@@ -62,6 +62,17 @@ void updateFilteredMeter(int sample) {
   currentMeter = currentMeter + ((sample - currentMeter) / nrSamples);
 }
 
+/*
+ * Reads the RSSI from the MD3362. A strong signal is 0, a weak 
+ * signal is 5V so we need to tweak the values a bit.
+ * This function returns:
+ * 0    for weak signals
+ * 1023 for strong signals
+ */
+int readRSSI() {
+  return map(analogRead(SMETER),54, 1023, 1023,0);
+}
+
 void writeSMeter(int row, int pos) {
   const int maxbars = 10 * 3; // 10 characters with 3 vertical bars each
   
@@ -70,10 +81,10 @@ void writeSMeter(int row, int pos) {
 
   for (int barindex = 0; barindex < maxbars; barindex +=3) {
     switch (min(displaybars,3)) {
-      case 3: lcd.write(""+ METER_CHAR_3); break;  // triple bar
-      case 2: lcd.write(""+ METER_CHAR_2); break;  // double bar
-      case 1: lcd.write(""+METER_CHAR_1); break;  // single bar
-      default: lcd.write(""+METER_CHAR_0); break; // no bar
+      case 3:  lcd.write("" + METER_CHAR_3); break;  // triple bar
+      case 2:  lcd.write("" + METER_CHAR_2); break;  // double bar
+      case 1:  lcd.write("" + METER_CHAR_1); break;  // single bar
+      default: lcd.write("" + METER_CHAR_0); break;  // no bar
     }
     displaybars -= 3;
   }  

@@ -43,7 +43,7 @@ void initLCD(){
 
 void createLCDCharacters(){
 
-  createCharX(METER_CHAR_0,
+  createChar(METER_CHAR_0,
     B00000,
     B10000,
     B00000,
@@ -53,7 +53,7 @@ void createLCDCharacters(){
     B00000,
     B10000);
 
-  createCharX(METER_CHAR_1,
+  createChar(METER_CHAR_1,
     B00000,
     B10000,
     B10000,
@@ -63,7 +63,7 @@ void createLCDCharacters(){
     B10000,
     B10000);
 
-  createCharX(METER_CHAR_2,
+  createChar(METER_CHAR_2,
     B00000,
     B10000,
     B10100,
@@ -73,7 +73,7 @@ void createLCDCharacters(){
     B10100,
     B10000);
 
-  createCharX(METER_CHAR_3,
+  createChar(METER_CHAR_3,
     B00000,
     B10000,
     B10101,
@@ -91,7 +91,7 @@ void createLCDCharacters(){
  *  <sarcasm> This is of course WAY prettier and more concise </sarcasm>.
  * 
  */
-void createCharX(int character, byte a, byte b, byte c, byte d, byte e, byte f, byte g, byte h) {
+void createChar(int character, byte a, byte b, byte c, byte d, byte e, byte f, byte g, byte h) {
   byte tempchar[8] = {a, b, c, d, e, f, g, h};
   lcd.createChar(character, tempchar);
 }

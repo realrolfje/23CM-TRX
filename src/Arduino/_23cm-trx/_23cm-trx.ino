@@ -43,15 +43,19 @@
 /* Shared (global) variables */
 // initialize the library with the numbers of the interface pins
 //                rs E  D4 D5 D6 D7
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+LiquidCrystal lcd(11,12,4,5,6,7);
 
 
 void setup() {
+  Serial.begin(115200);
+  initLCD();
+
   setupSubAudio();
   setTone(885);  // 88.5 Hz
 }
 
 void loop() {
-  int metervalue = 512 * (millis()/1000)%2;
-  testSMeterDisplay(metervalue);
+  int value = 790 * ((millis()/1000) %2);
+   Serial.println(value);
+  testSMeterDisplay(value);
 }

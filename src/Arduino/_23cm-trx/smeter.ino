@@ -2,7 +2,7 @@
  * Routines to sample the S signal and display an
  * S-meter on the dislay with fast attack and slow decay.
  */
-unsigned long nextMeterUpdate = -1;
+unsigned long nextMeterUpdate = 0;
 const unsigned long meterUpdateMillis = 50;
 
 // 10 characters plus a null character 
@@ -20,7 +20,7 @@ void testSMeterDisplay(int value) {
   }
 
   updateFilteredMeter(value);
-  writeSMeter(0,0);
+  writeSMeter(1,0);
 
   nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
@@ -56,7 +56,7 @@ void updateFilteredMeter(int sample) {
    */
   int nrSamples = (sample > currentMeter) 
                   ? 1    /* fast attack */  
-                  : 100; /* slow decay  */
+                  : 6; /* slow decay  */
 
   /* Calculate the approximate average with the new sample */
   currentMeter = currentMeter + ((sample - currentMeter) / nrSamples);
@@ -74,18 +74,26 @@ int readRSSI() {
 }
 
 void writeSMeter(int row, int pos) {
-  const int maxbars = 10 * 3; // 10 characters with 3 vertical bars each
+  lcd.setCursor(pos,row);
   
+  const int maxbars = 10 * 3; // 10 characters with 3 vertical bars each
+
   // Calculate bars from s meter here  
-  int displaybars = 15;
+  int displaybars = currentMeter * maxbars / 1024;
 
   for (int barindex = 0; barindex < maxbars; barindex +=3) {
-    switch (min(displaybars,3)) {
-      case 3:  lcd.write("" + METER_CHAR_3); break;  // triple bar
-      case 2:  lcd.write("" + METER_CHAR_2); break;  // double bar
-      case 1:  lcd.write("" + METER_CHAR_1); break;  // single bar
-      default: lcd.write("" + METER_CHAR_0); break;  // no bar
+    int thischar = min(displaybars,3);
+    if (barindex == 0 && thischar == 0) {
+      lcd.print((char) METER_CHAR_1);
+    } else {
+      switch (thischar) {
+        case 3:  lcd.print((char) METER_CHAR_3); break;  // triple bar
+        case 2:  lcd.print((char) METER_CHAR_2); break;  // double bar
+        case 1:  lcd.print((char) METER_CHAR_1); break;  // single bar
+        default: lcd.print((char) METER_CHAR_0); break;  // no bar
+      }
     }
     displaybars -= 3;
   }  
+  lcd.print((char) METER_CHAR_1);
 }

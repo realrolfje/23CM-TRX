@@ -5,10 +5,6 @@
 unsigned long nextMeterUpdate = 0;
 const unsigned long meterUpdateMillis = 50;
 
-// 10 characters plus a null character 
-// so we can use it as a proper string.
-#define meterdisplaysize 10
-
 int currentMeter = 0;
 
 void testSMeterDisplay(int value) {

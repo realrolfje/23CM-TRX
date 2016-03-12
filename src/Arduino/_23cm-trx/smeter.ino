@@ -8,17 +8,6 @@ const unsigned long meterUpdateMillis = 50;
 // 10 characters plus a null character 
 // so we can use it as a proper string.
 #define meterdisplaysize 10
-char meterdisplay[11] = 
-{ METER_CHAR_1,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_0,
-  METER_CHAR_1};
 
 int currentMeter = 0;
 
@@ -31,8 +20,7 @@ void testSMeterDisplay(int value) {
   }
 
   updateFilteredMeter(value);
-  buildMeterDisplayString();
-  writeMeterDisplay(0,0);
+  writeSMeter(0,0);
 
   nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
@@ -46,8 +34,7 @@ void updateSmeterDisplay() {
   }
 
   updateFilteredMeter(analogRead(SMETER));
-  buildMeterDisplayString();
-  writeMeterDisplay(0,0);
+  writeSMeter(0,0);
 
   nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
@@ -75,26 +62,19 @@ void updateFilteredMeter(int sample) {
   currentMeter = currentMeter + ((sample - currentMeter) / nrSamples);
 }
 
-void buildMeterDisplayString() {
-  int fullblocks = (currentMeter*meterdisplaysize)/1024;
-  int lastchar  = ((currentMeter*meterdisplaysize)%1024)/3;
-  for(int i=0; i<meterdisplaysize; i++){
-    if (i<=fullblocks) {
-      meterdisplay[i] = METER_CHAR_3;
-    } else if (i==fullblocks+1) {
-      switch(lastchar) {
-        case 0: meterdisplay[i] = METER_CHAR_0;
-        case 1: meterdisplay[i] = METER_CHAR_1;
-        case 2: meterdisplay[i] = METER_CHAR_2;
-      }
-    } else {
-      meterdisplay[i]=METER_CHAR_0;
+void writeSMeter(int row, int pos) {
+  const int maxbars = 10 * 3; // 10 characters with 3 vertical bars each
+  
+  // Calculate bars from s meter here  
+  int displaybars = 15;
+
+  for (int barindex = 0; barindex < maxbars; barindex +=3) {
+    switch (min(displaybars,3)) {
+      case 3: lcd.write(""+ METER_CHAR_3); break;  // triple bar
+      case 2: lcd.write(""+ METER_CHAR_2); break;  // double bar
+      case 1: lcd.write(""+METER_CHAR_1); break;  // single bar
+      default: lcd.write(""+METER_CHAR_0); break; // no bar
     }
-  }
+    displaybars -= 3;
+  }  
 }
-
-void writeMeterDisplay(byte col, byte row) {
-  lcd.setCursor(col,row);
-  lcd.print(meterdisplay);
-}
-

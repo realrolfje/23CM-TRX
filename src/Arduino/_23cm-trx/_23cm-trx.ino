@@ -36,6 +36,8 @@
 #define SMETER        A1
 #define MUTE          A0
 
+#define PTT            8
+
 #define lcdBacklightPin 10 
 
 /* Includes and external libraries */
@@ -50,14 +52,38 @@ LiquidCrystal lcd(11,12, 4, 5, 6, 7);
 
 void setup() {
   Serial.begin(115200);
+
+  pinMode(TX_ON, OUTPUT);
+  
+  pinMode(PTT, INPUT_PULLUP);
+  digitalWrite(SMETER, LOW); // disable pullup
+
   initLCD();
   initPLL(25000);
 //  setupSubAudio();
 //  setTone(885);  // 88.5 Hz
-  setRxFreq(1298375000);
   initSmeter();
 }
 
 void loop() {
-  updateSmeterDisplay();
+  setRxFreq(1298375000);
+  while (!isPTTPressed()){
+    updateSmeterDisplay();    
+  }
+  
+  digitalWrite(MUTE, true);
+  setTxFreq(1270375000);
+
+  lcd.setCursor(0,1);
+  lcd.print("   TRANSMIT     ");
+  while (isPTTPressed()) {
+    // wait
+  }
 }
+
+
+boolean isPTTPressed(){
+  return !digitalRead(PTT);
+}
+
+

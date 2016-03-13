@@ -38,6 +38,10 @@ void initPLL(unsigned long raster) {
   
   fraster = raster;
   
+  pinMode(PLL_DATA,OUTPUT);
+  pinMode(PLL_CLK, OUTPUT);
+  pinMode(PLL_LE,  OUTPUT);
+
   digitalWrite(PLL_DATA,LOW);
   digitalWrite(PLL_CLK, LOW);
   digitalWrite(PLL_LE,  LOW);

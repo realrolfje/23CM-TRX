@@ -11,21 +11,6 @@ int currentMeter = 0;
 
 void initSmeter(){
   pinMode(SMETER, INPUT);
-  digitalWrite(SMETER, LOW);
-}
-
-void testSMeterDisplay(int value) {
-  unsigned long nowmillis = millis();
-  
-  if (nowmillis < nextMeterUpdate) {
-    // No update yet.
-    return;
-  }
-
-  updateFilteredMeter(value);
-  writeSMeter(1,0);
-
-  nextMeterUpdate = nowmillis + meterUpdateMillis;
 }
 
 void updateSmeterDisplay() {
@@ -74,20 +59,9 @@ void updateFilteredMeter(int sample) {
  */
 int readRSSI() {
   int raw = analogRead(SMETER);
-
   int rssi = map(raw,934, 982, 1023,0);
-
   boolean mute = rssi<(mutelevel*100);
   digitalWrite(MUTE, mute);
-  if ((millis() % 1000) <= 100) {
-    Serial.print("RSSI raw: ");
-    Serial.print(raw);
-    Serial.print(" mapped: ");
-    Serial.print(rssi);
-    Serial.print(" mute: ");
-    Serial.println(mute);
-  }
-  
   return rssi;
 }
 
@@ -114,4 +88,5 @@ void writeSMeter(int row, int pos) {
     displaybars -= 3;
   }  
   lcd.print((char) METER_CHAR_1);
+  lcd.print(min(9,currentMeter * 10 / 1023));
 }

@@ -9,7 +9,7 @@ int mutelevel = 3;
 unsigned long nextMeterUpdate = 0;
 int currentMeter = 0;
 
-void initSmeter(){
+void setupSmeter(){
   pinMode(SMETER, INPUT);
 }
 

@@ -34,7 +34,7 @@ void decBacklightBrightness(){
 //  EEPROMWriteBacklightValue();
 }
 
-void initLCD(){
+void setupLCD(){
   pinMode(lcdBacklightPin,OUTPUT);
   incBacklightBrightness();
   lcd.begin(16, 2);

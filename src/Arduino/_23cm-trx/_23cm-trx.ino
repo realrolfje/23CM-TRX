@@ -52,17 +52,12 @@ LiquidCrystal lcd(11,12, 4, 5, 6, 7);
 
 void setup() {
   Serial.begin(115200);
-
-  pinMode(TX_ON, OUTPUT);
-  
-  pinMode(PTT, INPUT_PULLUP);
-  digitalWrite(SMETER, LOW); // disable pullup
-
-  initLCD();
-  initPLL(25000);
-//  setupSubAudio();
+  setupControls();
+  setupLCD();
+  setupPLL(25000);
+  setupSubAudio();
 //  setTone(885);  // 88.5 Hz
-  initSmeter();
+  setupSmeter();
 }
 
 void loop() {

@@ -31,7 +31,8 @@ unsigned long fraster = 25000; // raster/step frequency
  * Initialize the PLL using the "Counter Reset Method" as
  * described on page 14 of the datasheet, ADF4113HV.pdf
  */
-void initPLL(unsigned long raster) {
+void setupPLL(unsigned long raster) {
+  
   Serial.print("Intialize PLL, raster ");
   Serial.print(raster);
   Serial.println(" Hz.");

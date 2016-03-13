@@ -9,6 +9,11 @@ int mutelevel = 3;
 unsigned long nextMeterUpdate = 0;
 int currentMeter = 0;
 
+void initSmeter(){
+  pinMode(SMETER, INPUT);
+  digitalWrite(SMETER, LOW);
+}
+
 void testSMeterDisplay(int value) {
   unsigned long nowmillis = millis();
   
@@ -68,9 +73,22 @@ void updateFilteredMeter(int sample) {
  * 1023 for strong signals
  */
 int readRSSI() {
-  int rssi = map(analogRead(SMETER),54, 1023, 1023,0);
-  digitalWrite(MUTE, rssi<(mutelevel*100));
-  return rssi;  
+  int raw = analogRead(SMETER);
+
+  int rssi = map(raw,934, 982, 1023,0);
+
+  boolean mute = rssi<(mutelevel*100);
+  digitalWrite(MUTE, mute);
+  if ((millis() % 1000) <= 100) {
+    Serial.print("RSSI raw: ");
+    Serial.print(raw);
+    Serial.print(" mapped: ");
+    Serial.print(rssi);
+    Serial.print(" mute: ");
+    Serial.println(mute);
+  }
+  
+  return rssi;
 }
 
 void writeSMeter(int row, int pos) {
@@ -79,7 +97,7 @@ void writeSMeter(int row, int pos) {
   const int maxbars = 10 * 3; // 10 characters with 3 vertical bars each
 
   // Calculate bars from s meter here  
-  int displaybars = currentMeter * maxbars / 1024;
+  int displaybars = currentMeter * maxbars / 1023;
 
   for (int barindex = 0; barindex < maxbars; barindex +=3) {
     int thischar = min(displaybars,3);

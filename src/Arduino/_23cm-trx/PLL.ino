@@ -33,7 +33,8 @@ unsigned long fraster = 25000; // raster/step frequency
  */
 void initPLL(unsigned long raster) {
   Serial.print("Intialize PLL, raster ");
-  Serial.println(raster);
+  Serial.print(raster);
+  Serial.println(" Hz.");
   
   fraster = raster;
   
@@ -85,6 +86,10 @@ void initPLL(unsigned long raster) {
  * Call this when switching from Rx to Tx
  */
 void setTxFreq(unsigned long txfreq){
+  Serial.print("Set Tx Freq: ");
+  Serial.println(txfreq);
+  Serial.print(" Hz.");
+
   displayFrequency(txfreq);
   setVCOFreq(txfreq);
   digitalWrite(TX_ON, HIGH); 
@@ -95,8 +100,9 @@ void setTxFreq(unsigned long txfreq){
  * Call this when switching from Tx to Rx
  */
 void setRxFreq(unsigned long rxfreq){
-  Serial.print("Set RX Freq: ");
-  Serial.println(rxfreq);
+  Serial.print("Set Rx Freq: ");
+  Serial.print(rxfreq);
+  Serial.println(" Hz.");
 
   digitalWrite(TX_ON, LOW); 
   displayFrequency(rxfreq);
@@ -109,7 +115,8 @@ void setRxFreq(unsigned long rxfreq){
  */
 void setVCOFreq(unsigned long freq) {
   Serial.print("Set VCO Freq: ");
-  Serial.println(freq);
+  Serial.print(freq);
+  Serial.println(" Hz.");
   
   // At which raster slot is the given frequency
   unsigned long channel = freq/fraster;
@@ -137,8 +144,8 @@ void setVCOFreq(unsigned long freq) {
  */
 void writePLL(unsigned long pll_word) {
   Serial.print("PLL word: ");
-  Serial.println(pll_word);
-  Serial.print("PLL bits: ");   
+  Serial.print(pll_word);
+  Serial.print(" -> wrote bits: ");   
   for (int i = 0; i < 24; i++) {
     boolean msb = (pll_word & 0x800000) ? true : false;
     Serial.print(msb);
@@ -147,10 +154,10 @@ void writePLL(unsigned long pll_word) {
     digitalWrite(PLL_CLK,LOW);
     pll_word <<= 1;
   }
-  
-   digitalWrite(PLL_LE,HIGH);
-   digitalWrite(PLL_LE,LOW);
-   Serial.println();
+
+  digitalWrite(PLL_LE,HIGH);
+  digitalWrite(PLL_LE,LOW);
+  Serial.println();
 }
 
 

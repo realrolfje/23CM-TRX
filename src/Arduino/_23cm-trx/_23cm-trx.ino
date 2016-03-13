@@ -36,7 +36,7 @@
 #define SMETER        A1
 #define MUTE          A0
 
-#define lcdBacklightPin 10
+#define lcdBacklightPin 10 
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
@@ -52,9 +52,10 @@ void setup() {
   Serial.begin(115200);
   initLCD();
   initPLL(25000);
-  setupSubAudio();
-  setTone(885);  // 88.5 Hz
+//  setupSubAudio();
+//  setTone(885);  // 88.5 Hz
   setRxFreq(1298375000);
+  initSmeter();
 }
 
 void loop() {

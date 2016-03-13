@@ -21,25 +21,30 @@
  * A = (1298375000 / 25000) % 16 = 15
  */
 
-#define LE        PC2
-#define DATA      PC1
-#define CLK       PC0
-
 const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
 
 unsigned long fref = 12800000; // reference frequency from the TCXO
 unsigned long fraster = 25000; // raster/step frequency
 
+
 /*
  * Initialize the PLL using the "Counter Reset Method" as
  * described on page 14 of the datasheet, ADF4113HV.pdf
  */
- void initPLL(unsigned long raster) {
+void initPLL(unsigned long raster) {
+  Serial.print("Intialize PLL, raster ");
+  Serial.print(raster);
+  Serial.println(" Hz.");
+  
   fraster = raster;
   
-  digitalWrite(DATA,LOW);
-  digitalWrite(CLK, LOW);
-  digitalWrite(LE,  LOW);
+  pinMode(PLL_DATA,OUTPUT);
+  pinMode(PLL_CLK, OUTPUT);
+  pinMode(PLL_LE,  OUTPUT);
+
+  digitalWrite(PLL_DATA,LOW);
+  digitalWrite(PLL_CLK, LOW);
+  digitalWrite(PLL_LE,  LOW);
 
   // Step 2, Conduct a function latch load with F1 bit set.
   //
@@ -60,11 +65,11 @@ unsigned long fraster = 25000; // raster/step frequency
   // 7.2nS anti-backlash pulse width (bit 16,17)
   // Devide ratio                    (bits 2 to 15)
   reg  = 0x020000; 
-  reg |= ((fref/fraster) << 2) & 0x00fffa; // Calculate devide ratio, mask those bits for safety
+  reg += ((fref/fraster) << 2) & 0x00fffa; // Calculate devide ratio, mask those bits for safety
   writePLL(reg);
 
   // Step 4, Conduct an AB counter load (set any frequency)
-  setVCOFreq(1298000000);
+  setVCOFreq(1299000000);
 
   // Step 5, conduct a function latch load with F1 bit cleared
   //
@@ -85,7 +90,13 @@ unsigned long fraster = 25000; // raster/step frequency
  * Call this when switching from Rx to Tx
  */
 void setTxFreq(unsigned long txfreq){
+  Serial.print("Set Tx Freq: ");
+  Serial.println(txfreq);
+  Serial.print(" Hz.");
+
+  displayFrequency(txfreq);
   setVCOFreq(txfreq);
+  digitalWrite(TX_ON, HIGH); 
 }
 
 /*
@@ -93,6 +104,12 @@ void setTxFreq(unsigned long txfreq){
  * Call this when switching from Tx to Rx
  */
 void setRxFreq(unsigned long rxfreq){
+  Serial.print("Set Rx Freq: ");
+  Serial.print(rxfreq);
+  Serial.println(" Hz.");
+
+  digitalWrite(TX_ON, LOW); 
+  displayFrequency(rxfreq);
   setVCOFreq(rxfreq - IF);
 }
 
@@ -101,6 +118,10 @@ void setRxFreq(unsigned long rxfreq){
  * of the VCO to the given frequency.
  */
 void setVCOFreq(unsigned long freq) {
+  Serial.print("Set VCO Freq: ");
+  Serial.print(freq);
+  Serial.println(" Hz.");
+  
   // At which raster slot is the given frequency
   unsigned long channel = freq/fraster;
 
@@ -108,8 +129,8 @@ void setVCOFreq(unsigned long freq) {
   unsigned long A = (channel % 16) & 0x3f;   // Calculate the  7 bits in A
 
   unsigned long reg = 0x000001; // Load AB Counter Latch
-  reg |= (B << 8); // Load B in bits 8-13
-  reg |= (A << 2); // Load A in bits 2-7
+  reg += (B << 8); // Load B in bits 8-13
+  reg += (A << 2); // Load A in bits 2-7
     
   writePLL(reg);
 }
@@ -125,13 +146,22 @@ void setVCOFreq(unsigned long freq) {
  * adequate for systems that have typical lock times in the 
  * hundreds of microseconds.
  */
-void writePLL(unsigned long reg) {
-  for (int i = 1; i < 3; i++) {
-    shiftOut(DATA,CLK,MSBFIRST,pll_word << i*8);
+void writePLL(unsigned long pll_word) {
+  Serial.print("PLL word: ");
+  Serial.print(pll_word);
+  Serial.print(" -> wrote bits: ");   
+  for (int i = 0; i < 24; i++) {
+    boolean msb = (pll_word & 0x800000) ? true : false;
+    Serial.print(msb);
+    digitalWrite(PLL_DATA, msb);
+    digitalWrite(PLL_CLK,HIGH);
+    digitalWrite(PLL_CLK,LOW);
+    pll_word <<= 1;
   }
-  
-   digitalWrite(LE,HIGH);
-   digitalWrite(LE,LOW);
+
+  digitalWrite(PLL_LE,HIGH);
+  digitalWrite(PLL_LE,LOW);
+  Serial.println();
 }
 
 

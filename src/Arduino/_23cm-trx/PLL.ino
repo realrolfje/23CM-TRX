@@ -26,6 +26,9 @@ const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
 unsigned long fref = 12800000; // reference frequency from the TCXO
 unsigned long fraster = 25000; // raster/step frequency
 
+unsigned long getRaster() {
+  return fraster;
+}
 
 /*
  * Initialize the PLL using the "Counter Reset Method" as

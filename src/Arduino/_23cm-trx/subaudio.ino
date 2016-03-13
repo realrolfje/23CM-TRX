@@ -12,7 +12,7 @@
  */
 #include <TimerOne.h>
 
-const byte subaudio_pin = 3;
+const byte subaudio_pin = 13;
 
 /* Valid subaudio frequencies, multiplied by 10. (885 means 88.5 Hz) */
 int freqTenthHz[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,

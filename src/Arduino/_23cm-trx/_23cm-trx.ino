@@ -27,6 +27,9 @@
  */
 
 /* Shared constants */
+#define ROTARY_A      3
+#define ROTARY_B      2
+#define ROTARY_PUSH   9
 
 #define PLL_LE        A5
 #define PLL_DATA      A4
@@ -55,24 +58,35 @@ void setup() {
   setupControls();
   setupLCD();
   setupPLL(25000);
+  setupControls();
   setupSubAudio();
 //  setTone(885);  // 88.5 Hz
   setupSmeter();
 }
 
 void loop() {
-  setRxFreq(1298375000);
-  while (!isPTTPressed()){
-    updateSmeterDisplay();    
-  }
-  
-  digitalWrite(MUTE, true);
-  setTxFreq(1270375000);
+  unsigned long freq = 1298375000;
 
-  lcd.setCursor(0,1);
-  lcd.print("   TRANSMIT     ");
-  while (isPTTPressed()) {
-    // wait
+  while (1) {    
+    setRxFreq(freq);
+    while (!isPTTPressed()){
+      long up = getRotaryTurn() * getRaster();
+      if (up != 0) {
+        freq += up;
+        setRxFreq(freq);
+      }
+      
+      updateSmeterDisplay();    
+    }
+    
+    digitalWrite(MUTE, true);
+    setTxFreq(freq - 28000000);
+  
+    lcd.setCursor(0,1);
+    lcd.print("   TRANSMIT     ");
+    while (isPTTPressed()) {
+      // wait
+    }
   }
 }
 

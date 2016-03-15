@@ -1,7 +1,9 @@
 # Turning the 23cm TRX into an Arduino
 
 This directory contains the sources and instructions to replace IC11 with an Arduino
-Pro Mini 5V or compatible.
+Pro Mini 5V or compatible. This project is pin-compatible with other efforts to run
+Arduino code inside the TRX. Be sure to check out
+[Remco's version](https://github.com/RemcoFYM/23cm) too.
 
 ## Loading the sources
 

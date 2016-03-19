@@ -57,7 +57,7 @@ void updateFilteredMeter(int sample) {
 int readRSSI() {
   int raw = analogRead(SMETER);
   int rssi = map(raw,934, 982, 1023,0);
-  boolean mute = rssi<(mutelevel*100);
+  boolean mute = rssi<(squelchlevel*100);
   digitalWrite(MUTE, mute);
   return rssi;
 }

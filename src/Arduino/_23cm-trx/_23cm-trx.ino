@@ -52,18 +52,16 @@ const byte LCD_D7        =  7;
 const byte LCD_BACKLIGHT = 10;
 
 /* Global variables and settings */
-unsigned long tcxoRefHz = 12800000;
-unsigned long rasterHz  = 25000;
+unsigned long tcxoRefHz     = 12800000;
+unsigned long rasterHz      = 25000;
 byte lcdBacklightBrightness = 7; // See lcd.ino
-int mutelevel = 3;
-
-
-
-
-
+byte squelchlevel           = 3;
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
+#include <TimerOne.h>
+#include <EEPROM.h>
+
 LiquidCrystal lcd(LCD_RS, LCD_LE, 
                   LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 

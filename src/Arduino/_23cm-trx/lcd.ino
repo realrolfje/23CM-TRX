@@ -1,12 +1,14 @@
-
-#define METER_CHAR_0 0 // :
-#define METER_CHAR_1 1 // |
-#define METER_CHAR_2 2 // ||
-#define METER_CHAR_3 3 // |||
+/*
+ * All routines related to putting text on the
+ * LCD panel and controlling the backlight.
+ */
+const byte METER_CHAR_0 = 0;  // :
+const byte METER_CHAR_1 = 1;  // |
+const byte METER_CHAR_2 = 2;  // ||
+const byte METER_CHAR_3 = 3;  // |||
 
 #define brightnessvalues_SIZE 8
-byte brightnessvalues[brightnessvalues_SIZE] = {5,15,30,55,105,155,205,255};
-byte lcdBacklightBrightness = brightnessvalues_SIZE - 1;
+const byte brightnessvalues[brightnessvalues_SIZE] = {5, 15, 30, 55, 105, 155, 205, 255};
 
 //byte getBacklightBrightness() {
 //  return lcdBacklightBrightness;
@@ -17,12 +19,12 @@ byte lcdBacklightBrightness = brightnessvalues_SIZE - 1;
 //    lcdBacklightBrightness = brightnessIndex;
 //  }
 //}
-//
+
 void incBacklightBrightness(){
   if (lcdBacklightBrightness < brightnessvalues_SIZE-1){
     lcdBacklightBrightness++;
   }
-  analogWrite(lcdBacklightPin, brightnessvalues[lcdBacklightBrightness]);
+  analogWrite(LCD_BACKLIGHT, brightnessvalues[lcdBacklightBrightness]);
 //  EEPROMWriteBacklightValue();
 }
 
@@ -30,15 +32,20 @@ void decBacklightBrightness(){
   if (lcdBacklightBrightness > 0){
     lcdBacklightBrightness--;
   }
-  analogWrite(lcdBacklightPin, brightnessvalues[lcdBacklightBrightness]);
+  analogWrite(LCD_BACKLIGHT, brightnessvalues[lcdBacklightBrightness]);
 //  EEPROMWriteBacklightValue();
 }
 
 void setupLCD(){
-  pinMode(lcdBacklightPin,OUTPUT);
-  incBacklightBrightness();
+  pinMode(LCD_BACKLIGHT,OUTPUT);
+
   lcd.begin(16, 2);
   createLCDCharacters();
+
+  for (byte i=0; i<255; i++){
+    delay(10);
+    analogWrite(LCD_BACKLIGHT, i);
+  }
 }
 
 void displayFrequency(unsigned long freq){

@@ -23,13 +23,6 @@
 
 const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
 
-unsigned long fref = 12800000; // reference frequency from the TCXO
-unsigned long fraster = 25000; // raster/step frequency
-
-unsigned long getRaster() {
-  return fraster;
-}
-
 /*
  * Initialize the PLL using the "Counter Reset Method" as
  * described on page 14 of the datasheet, ADF4113HV.pdf
@@ -40,7 +33,7 @@ void setupPLL(unsigned long raster) {
   Serial.print(raster);
   Serial.println(" Hz.");
   
-  fraster = raster;
+  rasterHz = raster;
   
   pinMode(PLL_DATA,OUTPUT);
   pinMode(PLL_CLK, OUTPUT);
@@ -69,7 +62,7 @@ void setupPLL(unsigned long raster) {
   // 7.2nS anti-backlash pulse width (bit 16,17)
   // Devide ratio                    (bits 2 to 15)
   reg  = 0x020000; 
-  reg += ((fref/fraster) << 2) & 0x00fffa; // Calculate devide ratio, mask those bits for safety
+  reg += ((tcxoRefHz/rasterHz) << 2) & 0x00fffa; // Calculate devide ratio, mask those bits for safety
   writePLL(reg);
 
   // Step 4, Conduct an AB counter load (set any frequency)
@@ -127,7 +120,7 @@ void setVCOFreq(unsigned long freq) {
   Serial.println(" Hz.");
   
   // At which raster slot is the given frequency
-  unsigned long channel = freq/fraster;
+  unsigned long channel = freq/rasterHz;
 
   unsigned long B = (channel / 16) & 0x1fff; // Calculate the 13 bits in B
   unsigned long A = (channel % 16) & 0x3f;   // Calculate the  7 bits in A

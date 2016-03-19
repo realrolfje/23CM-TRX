@@ -12,8 +12,6 @@
  */
 #include <TimerOne.h>
 
-const byte subaudio_pin = 13;
-
 /* Valid subaudio frequencies, multiplied by 10. (885 means 88.5 Hz) */
 int freqTenthHz[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
                       948,  974, 1000, 1035, 1072, 1109, 1148, 1188, 1230, 1273,
@@ -21,7 +19,7 @@ int freqTenthHz[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
                      1862, 1928, 2035, 2107, 2181, 2257, 2336, 2418, 2503 };
 
 void setupSubAudio() {
-  pinMode(subaudio_pin, OUTPUT); 
+  pinMode(SUBAUDIO, OUTPUT); 
   Timer1.initialize();
   Timer1.attachInterrupt(flipAudioAubaudioPin);
 
@@ -32,7 +30,7 @@ void setupSubAudio() {
 volatile boolean audioBit=false;
 void flipAudioAubaudioPin() {
   audioBit = !audioBit;
-  digitalWrite(subaudio_pin, audioBit);
+  digitalWrite(SUBAUDIO, audioBit);
 }
 
 void setTone(int frequencyTenthHz) {
@@ -45,6 +43,6 @@ void setTone(int frequencyTenthHz) {
 void stopTone(){
   Timer1.stop();
   audioBit = false;
-  digitalWrite(subaudio_pin, audioBit);
+  digitalWrite(SUBAUDIO, audioBit);
 }
 

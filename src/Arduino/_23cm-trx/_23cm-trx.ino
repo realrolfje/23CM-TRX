@@ -26,32 +26,46 @@
  * 
  */
 
-/* Shared constants */
-#define ROTARY_A      3
-#define ROTARY_B      2
-#define ROTARY_PUSH   9
+/* Connections - User Controls */
+const byte ROTARY_A      =  3;
+const byte ROTARY_B      =  2;
+const byte ROTARY_PUSH   =  9;
+const byte PTT           =  8;
 
-#define PLL_LE        A5
-#define PLL_DATA      A4
-#define PLL_CLK       A3
-#define TX_ON         A2
+/* Connections - Hardware */
+const byte PLL_LE        = A5;
+const byte PLL_DATA      = A4;
+const byte PLL_CLK       = A3;
+const byte TX_ON         = A2;
+const byte SMETER        = A1;
+const byte MUTE          = A0;
+const byte SUBAUDIO = 13;
 
-#define SMETER        A1
-#define MUTE          A0
 
-#define PTT            8
+/* Connections - LCD panel */
+const byte LCD_RS        = 11;
+const byte LCD_LE        = 12;
+const byte LCD_D4        =  4;
+const byte LCD_D5        =  5;
+const byte LCD_D6        =  6;
+const byte LCD_D7        =  7;
+const byte LCD_BACKLIGHT = 10;
 
-#define lcdBacklightPin 10 
+/* Global variables and settings */
+unsigned long tcxoRefHz = 12800000;
+unsigned long rasterHz  = 25000;
+byte lcdBacklightBrightness = 7; // See lcd.ino
+int mutelevel = 3;
+
+
+
+
+
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
-
-
-/* Shared (global) variables */
-// initialize the library with the numbers of the interface pins
-//                rs E  D4 D5 D6 D7
-LiquidCrystal lcd(11,12, 4, 5, 6, 7);
-
+LiquidCrystal lcd(LCD_RS, LCD_LE, 
+                  LCD_D4, LCD_D5, LCD_D6, LCD_D7);
 
 void setup() {
   Serial.begin(115200);
@@ -70,7 +84,7 @@ void loop() {
   while (1) {    
     setRxFreq(freq);
     while (!isPTTPressed()){
-      long up = getRotaryTurn() * getRaster();
+      long up = getRotaryTurn() * rasterHz;
       if (up != 0) {
         freq += up;
         setRxFreq(freq);

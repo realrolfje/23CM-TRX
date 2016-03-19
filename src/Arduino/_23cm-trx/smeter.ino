@@ -4,10 +4,8 @@
  */
 const unsigned long meterUpdateMillis = 50;
 
-int mutelevel = 3;
-
 unsigned long nextMeterUpdate = 0;
-int currentMeter = 0;
+int           currentMeter    = 0;
 
 void setupSmeter(){
   pinMode(SMETER, INPUT);
@@ -17,8 +15,7 @@ void updateSmeterDisplay() {
   unsigned long nowmillis = millis();
   
   if (nowmillis < nextMeterUpdate) {
-    // No update yet.
-    return;
+    return; // No update yet.
   }
 
   updateFilteredMeter(readRSSI());
@@ -44,7 +41,7 @@ void updateFilteredMeter(int sample) {
    */
   int nrSamples = (sample > currentMeter) 
                   ? 1    /* fast attack */  
-                  : 6; /* slow decay  */
+                  : 6;   /* slow decay  */
 
   /* Calculate the approximate average with the new sample */
   currentMeter = currentMeter + ((sample - currentMeter) / nrSamples);
@@ -68,13 +65,13 @@ int readRSSI() {
 void writeSMeter(int row, int pos) {
   lcd.setCursor(pos,row);
   
-  const int maxbars = 10 * 3; // 10 characters with 3 vertical bars each
+  const byte maxbars = 10 * 3; // 10 characters with 3 vertical bars each
 
   // Calculate bars from s meter here  
   int displaybars = currentMeter * maxbars / 1023;
 
   for (int barindex = 0; barindex < maxbars; barindex +=3) {
-    int thischar = min(displaybars,3);
+    int thischar = min(displaybars, 3);
     if (barindex == 0 && thischar == 0) {
       lcd.print((char) METER_CHAR_1);
     } else {

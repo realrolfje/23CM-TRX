@@ -67,6 +67,7 @@ LiquidCrystal lcd(LCD_RS, LCD_LE,
 
 void setup() {
   Serial.begin(115200);
+  readAllFromEEPROM();
   setupControls();
   setupLCD();
   setupPLL(25000);

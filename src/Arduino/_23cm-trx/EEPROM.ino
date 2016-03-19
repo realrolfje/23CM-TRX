@@ -5,6 +5,16 @@
  * ATmega168  512 B - Arduino Nano 2.3
  * ATmega328 1024 B - Arduino Nano 3.0 and Pro Mini
  * 
+ * The CRC check was replaced by a "magic number".
+ * Although a CRC is much better for detecting garbled
+ * memory and recovering from that, it also means that
+ * the CRC bytes are written each time a setting
+ * changes. This means that all efforts to only write
+ * changes to prevent EEPROM fatique is useless, as
+ * the CRC bytes will always be rewritten. The Arduino's
+ * have a guaranteed write lifetime of 100.000 cycles,
+ * which is not much.
+ * 
  */
 
 const unsigned int magicnumber = 32235;

@@ -87,6 +87,9 @@ byte loopMemory() {
       setRxFreq(rxFreqHz);
       lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
     }
+
+    /* Handle PTT */
+    if (isPTTPressed()) { transmit(); }
   }
 }
 

@@ -22,7 +22,7 @@
  * 
  */
 
-const unsigned int magicnumber = 31236;
+const unsigned int magicnumber = 31237;
 unsigned int eeprompointer = 0;
 unsigned int eepromcrc     = 0;
 
@@ -40,6 +40,7 @@ void readAllFromEEPROM() {
   lcdBacklightBrightness = EEPROMReadByte();
   squelchlevel           = EEPROMReadByte();
   rxFreqHz               = EEPROMReadLong();
+  subAudioIndex          = EEPROMReadInt();
 
   Serial.print("Read settings from EEPROM, pointer:");
   Serial.println(eeprompointer);
@@ -55,6 +56,7 @@ void writeAllToEEPROM() {
   EEPROMWriteByte(lcdBacklightBrightness);
   EEPROMWriteByte(squelchlevel);
   EEPROMWriteLong(rxFreqHz);
+  EEPROMWriteInt(subAudioIndex);
   Serial.print("Wrote settings to EEPROM, pointer:");
   Serial.println(eeprompointer);
 }

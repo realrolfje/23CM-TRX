@@ -59,7 +59,11 @@ byte squelchlevel           = 3; // Min 0, Max 9, see loop.ino
 
 /* TRX related settings */
 unsigned long rxFreqHz = 1298375000;
-byte subAudioIndex     = -1; // -1 is no audio. See subaudio.ino.
+int subAudioIndex      = -1; // -1 is no audio. See subaudio.ino.
+
+/* Loop structure */
+const byte LOOP_VFO  = 0;
+const byte LOOP_MENU = 1;
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
@@ -81,8 +85,15 @@ void setup() {
 }
 
 void loop() {
-  loopVfo();
-  loopMenu();
+  byte jumpto = LOOP_VFO;
+
+  while (1) {
+    switch(jumpto) {
+      case LOOP_VFO:  jumpto = loopVfo(); break;
+      case LOOP_MENU: jumpto = loopMenu(); break;
+      default: jumpto = LOOP_VFO;
+    }
+  }
 }
 
 

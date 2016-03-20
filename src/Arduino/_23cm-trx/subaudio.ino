@@ -12,11 +12,11 @@
  */
 
 /* Valid subaudio frequencies, multiplied by 10. (885 means 88.5 Hz) */
-/*               Index: 0     1     2     3     4     5     6     7     8     9 */
-int freqTenthHz[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
-                      948,  974, 1000, 1035, 1072, 1109, 1148, 1188, 1230, 1273,
-                     1318, 1365, 1413, 1462, 1514, 1567, 1622, 1679, 1738, 1799,
-                     1862, 1928, 2035, 2107, 2181, 2257, 2336, 2418, 2503 };
+/*         Index: 0     1     2     3     4     5     6     7     8     9 */
+int ctcss[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
+                948,  974, 1000, 1035, 1072, 1109, 1148, 1188, 1230, 1273,
+               1318, 1365, 1413, 1462, 1514, 1567, 1622, 1679, 1738, 1799,
+               1862, 1928, 2035, 2107, 2181, 2257, 2336, 2418, 2503 };
 
 void setupSubAudio() {
   pinMode(SUBAUDIO, OUTPUT); 
@@ -36,7 +36,7 @@ void flipAudioAubaudioPin() {
 void startCTCSS() {
   if (subAudioIndex < 0) { return; } // no tone
 
-  int frequencyTenthHz = freqTenthHz[subAudioIndex];
+  int frequencyTenthHz = ctcss[subAudioIndex];
 
   /* Period corrected for 16MHz Arduino plus ISR timer inaccuracy */
   long halfPeriodMicroSeconds = 10012429 / (frequencyTenthHz * 2);
@@ -49,4 +49,19 @@ void stopCTCSS() {
   audioBit = false;
   digitalWrite(SUBAUDIO, audioBit);
 }
+
+void printCTCSS() {
+  Serial.print("CTCSS index:");
+  Serial.print(subAudioIndex);
+  Serial.print(" - ");
+  Serial.println(ctcss[subAudioIndex]);
+  
+  if (subAudioIndex < 0) {
+    lcd.print("Off         ");
+  } else {
+    lcd.print(ctcss[subAudioIndex]/10); lcd.print(".");
+    lcd.print(ctcss[subAudioIndex]%10); lcd.print(" Hz ");
+  }
+}
+
 

@@ -60,11 +60,13 @@ byte squelchlevel           = 3; // Min 0, max 9, see loop.ino
 /* TRX related settings */
 unsigned long rxFreqHz = 1298375000; // Defaults to PI2NOS
 int subAudioIndex      = -1;         // -1 is no audio. See subaudio.ino.
-int repeaterShiftIndex = 2;          // Min 0, max 4, see PLL.ino
+int repeaterShiftIndex = 0;          // Min 0, max 4, see PLL.ino
 
 /* Loop structure */
 const byte LOOP_VFO  = 0;
 const byte LOOP_MENU = 1;
+
+const byte VFO_MEMORY_LOCATION = 10;
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
@@ -76,7 +78,10 @@ LiquidCrystal lcd(LCD_RS, LCD_LE,
 
 void setup() {
   Serial.begin(115200);
-  readAllFromEEPROM();
+  
+  readGlobalSettings();
+  readMemory(VFO_MEMORY_LOCATION);
+  
   setupControls();
   setupLCD();
   setupPLL(25000);

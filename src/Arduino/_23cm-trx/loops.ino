@@ -1,8 +1,12 @@
 /*
  * 
  */
+
+ 
  byte loopVfo() {
   Serial.println("--- Loop: VFO ---");
+  readMemory(VFO_MEMORY_LOCATION);
+
   lcd.clear();
   setRxFreq(rxFreqHz);
   lcd.setCursor(13,0); lcd.print("VFO");    // Indicate unsaved changes
@@ -27,7 +31,7 @@
   
     /* Exit if rotary pushed */
     if (2 == getRotaryPush()) {
-      writeAllToEEPROM();
+      writeMemory(VFO_MEMORY_LOCATION);
       return LOOP_MENU;
     }
   
@@ -36,7 +40,7 @@
 
     /* Write changes to EEPROM */
     if (unsavedChanges && millis() > nextEpromWrite) {
-      writeAllToEEPROM();
+      writeMemory(VFO_MEMORY_LOCATION);
       lcd.setCursor(15,0); lcd.print("O");
       unsavedChanges = false;
     }      
@@ -137,7 +141,8 @@ byte loopMenu() {
 
     }
     // Exit menu, write all changes to EEPROM
-    writeAllToEEPROM();
+    writeGlobalSettings();
+    writeMemory(VFO_MEMORY_LOCATION);
   }
   return LOOP_VFO;
 }

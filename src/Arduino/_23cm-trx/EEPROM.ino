@@ -22,46 +22,70 @@
  * 
  */
 
-const unsigned int magicnumber = 31238;
+const unsigned int magicnumber = 31239;
 unsigned int eeprompointer = 0;
-unsigned int eepromcrc     = 0;
 
-// Reads all settings from EEPROM
-void readAllFromEEPROM() {
+// Read global settings
+void readGlobalSettings() {
   eeprompointer = 0;
-  unsigned int checkMagic = EEPROMReadInt();
-  if (checkMagic != magicnumber) {
-    Serial.println("EEPROM Magic mismatch, not reading config.");
-    return;
-  }
+  if (!checkMagicNumber()) { return; } // Exit if no magic
 
   tcxoRefHz              = EEPROMReadLong();
   rasterHz               = EEPROMReadLong();
   lcdBacklightBrightness = EEPROMReadByte();
   squelchlevel           = EEPROMReadByte();
-  rxFreqHz               = EEPROMReadLong();
-  subAudioIndex          = EEPROMReadInt();
-  repeaterShiftIndex     = EEPROMReadInt();
-
-  Serial.print("Read settings from EEPROM, pointer:");
-  Serial.println(eeprompointer);
 }
 
-// Writes all settings to EEPROM
-void writeAllToEEPROM() {
+void writeGlobalSettings() {
   eeprompointer = 0;
-  EEPROMWriteInt(magicnumber);
+  writeMagicNumber();
 
   EEPROMWriteLong(tcxoRefHz);
   EEPROMWriteLong(rasterHz);
   EEPROMWriteByte(lcdBacklightBrightness);
   EEPROMWriteByte(squelchlevel);
+}
+
+// Reads memory settings to EEPROM
+void readMemory(int memory) {
+  if (memory < 0 || memory > VFO_MEMORY_LOCATION) { return; }
+  
+  eeprompointer = 100 + memory * 8;
+  if (!checkMagicNumber()) { return; }
+
+  rxFreqHz               = EEPROMReadLong(); // 4 bytes
+  subAudioIndex          = EEPROMReadInt();  // 2 bytes
+  repeaterShiftIndex     = EEPROMReadInt();  // 2 bytes
+
+  Serial.print("Read settings from EEPROM memory ");
+  Serial.print(memory);
+  Serial.print(", pointer:");
+  Serial.println(eeprompointer);
+}
+
+// Writes memory settings to EEPROM
+void writeMemory(int memory) {
+  if (memory < 0 || memory > VFO_MEMORY_LOCATION) { return; }
+
+  eeprompointer = 100 + memory * 8;
+  writeMagicNumber();
+
   EEPROMWriteLong(rxFreqHz);
   EEPROMWriteInt(subAudioIndex);
   EEPROMWriteInt(repeaterShiftIndex);
   
-  Serial.print("Wrote settings to EEPROM, pointer:");
+  Serial.print("Wrote settings to EEPROM memory ");
+  Serial.print(memory);
+  Serial.print(", pointer:");
   Serial.println(eeprompointer);
+}
+
+boolean checkMagicNumber() {
+  return magicnumber == EEPROMReadInt();
+}
+
+void writeMagicNumber() {
+  EEPROMWriteInt(magicnumber);
 }
  
 void EEPROMWriteLong(long p_value) {

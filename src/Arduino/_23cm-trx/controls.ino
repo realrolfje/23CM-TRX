@@ -17,6 +17,44 @@ void setupControls() {
   attachInterrupt(digitalPinToInterrupt(ROTARY_A), rotary_isr, FALLING); 
 }
 
+
+boolean isPTTPressed(){
+  return !digitalRead(PTT);
+}
+
+/*
+ * Returns the number of clicks the rotary encorder
+ * turned clockwise since last read.
+ * Negative clicks is counter clockwise.
+ */
+int getRotaryTurn() {
+  int temp = rotary_turn;
+  rotary_turn = 0;
+  return temp;
+}
+
+/*
+ * 0 - no push
+ * 1 - short push
+ * 2 - long push
+ */
+byte getRotaryPush() {
+  if (!digitalRead(ROTARY_PUSH)) {
+    return 0;
+  }
+  
+  unsigned long longPush = millis() + 500;
+  while(digitalRead(ROTARY_PUSH)){
+    delay(10);
+  };
+
+  if (millis() > longPush) {
+    return 2;
+  } else {
+    return 1;
+  }
+}
+
 void rotary_isr() {
     unsigned long now = millis();
     if (now < nextRotaryMs) {
@@ -32,9 +70,4 @@ void rotary_isr() {
     }
 }
 
-int getRotaryTurn() {
-  int temp = rotary_turn;
-  rotary_turn = 0;
-  return temp;
-}
 

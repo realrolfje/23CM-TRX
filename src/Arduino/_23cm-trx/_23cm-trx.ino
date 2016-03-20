@@ -57,6 +57,9 @@ unsigned long rasterHz      = 25000;
 byte lcdBacklightBrightness = 7; // See lcd.ino
 byte squelchlevel           = 3;
 
+/* TRX related settings */
+unsigned long rxFreqHz = 1298375000;
+
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
 #include <TimerOne.h>
@@ -78,34 +81,10 @@ void setup() {
 }
 
 void loop() {
-  unsigned long freq = 1298375000;
 
-  while (1) {    
-    setRxFreq(freq);
-    while (!isPTTPressed()){
-      long up = getRotaryTurn() * rasterHz;
-      if (up != 0) {
-        freq += up;
-        setRxFreq(freq);
-      }
-      
-      updateSmeterDisplay();    
-    }
-    
-    digitalWrite(MUTE, true);
-    setTxFreq(freq - 28000000);
-  
-    lcd.setCursor(0,1);
-    lcd.print("   TRANSMIT     ");
-    while (isPTTPressed()) {
-      // wait
-    }
-  }
+  loopVfo();
 }
 
 
-boolean isPTTPressed(){
-  return !digitalRead(PTT);
-}
 
 

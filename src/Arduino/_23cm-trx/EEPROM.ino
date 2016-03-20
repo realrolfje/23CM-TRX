@@ -15,9 +15,14 @@
  * have a guaranteed write lifetime of 100.000 cycles,
  * which is not much.
  * 
+ * Whenever the code for saving/loading the setting
+ * changes, please chooose a different magic number.
+ * 
+ * Writing a single byte to EEPROM costs 3.3mS.
+ * 
  */
 
-const unsigned int magicnumber = 32235;
+const unsigned int magicnumber = 32236;
 unsigned int eeprompointer = 0;
 unsigned int eepromcrc     = 0;
 
@@ -26,7 +31,7 @@ void readAllFromEEPROM() {
   eeprompointer = 0;
   unsigned int checkMagic = EEPROMReadInt();
   if (checkMagic != magicnumber) {
-    Serial.println("EEPROM Magic mismatch, not reading config from memory");
+    Serial.println("EEPROM Magic mismatch, not reading config.");
     return;
   }
 
@@ -34,6 +39,7 @@ void readAllFromEEPROM() {
   rasterHz               = EEPROMReadLong();
   lcdBacklightBrightness = EEPROMReadByte();
   squelchlevel           = EEPROMReadByte();
+  rxFreqHz               = EEPROMReadLong();
 }
 
 // Writes all settings to EEPROM
@@ -45,6 +51,7 @@ void writeAllToEEPROM() {
   EEPROMWriteLong(rasterHz);
   EEPROMWriteByte(lcdBacklightBrightness);
   EEPROMWriteByte(squelchlevel);
+  EEPROMWriteLong(rxFreqHz);
 }
  
 void EEPROMWriteLong(long p_value) {

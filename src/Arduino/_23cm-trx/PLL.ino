@@ -95,7 +95,7 @@ void setTxFreq(unsigned long txfreq){
   setVCOFreq(txfreq);
   digitalWrite(TX_ON, HIGH);
 
-  lcd.setCursor(14,0);
+  lcd.setCursor(14,1);
   lcd.print("TX");
   lcd.setCursor(0,1);
   lcd.print("Tone ");

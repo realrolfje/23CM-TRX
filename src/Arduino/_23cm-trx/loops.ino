@@ -5,6 +5,7 @@
   Serial.println("--- Loop: VFO ---");
   lcd.clear();
   setRxFreq(rxFreqHz);
+  lcd.setCursor(13,0); lcd.print("VFO");    // Indicate unsaved changes
 
   // Write to EEPROM every 10 seconds;
   const int writeEvery = 10000;
@@ -18,7 +19,7 @@
     long up = getRotaryTurn() * rasterHz;
     if (up != 0) {
       nextEpromWrite = millis() + writeEvery; // Hold off writes
-      lcd.setCursor(15,0); lcd.print(".");    // Indicate unsaved changes
+      lcd.setCursor(15,0); lcd.print("0");    // Indicate unsaved changes
       unsavedChanges = true;
       rxFreqHz += up;
       setRxFreq(rxFreqHz);
@@ -47,7 +48,7 @@
     /* Write changes to EEPROM */
     if (unsavedChanges && millis() > nextEpromWrite) {
       writeAllToEEPROM();
-      lcd.setCursor(15,0); lcd.print(" ");
+      lcd.setCursor(15,0); lcd.print("O");
       unsavedChanges = false;
     }      
   }

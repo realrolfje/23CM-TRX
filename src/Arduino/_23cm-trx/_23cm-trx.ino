@@ -51,11 +51,15 @@ const byte LCD_D6        =  6;
 const byte LCD_D7        =  7;
 const byte LCD_BACKLIGHT = 10;
 
+/* Global constants */
+const byte VFO_MEMORY_LOCATION = 10;
+
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
 unsigned long rasterHz      = 25000;
 byte lcdBacklightBrightness = 7; // Min 0, max 7, see lcd.ino
 byte squelchlevel           = 3; // Min 0, max 9, see loop.ino
+byte selectedMemory         = VFO_MEMORY_LOCATION; 
 
 /* TRX related settings */
 unsigned long rxFreqHz = 1298375000; // Defaults to PI2NOS
@@ -63,10 +67,10 @@ int subAudioIndex      = -1;         // -1 is no audio. See subaudio.ino.
 int repeaterShiftIndex = 0;          // Min 0, max 4, see PLL.ino
 
 /* Loop structure */
-const byte LOOP_VFO  = 0;
-const byte LOOP_MENU = 1;
+const byte LOOP_VFO    = 0;
+const byte LOOP_MENU   = 1;
+const byte LOOP_MEMORY = 2;
 
-const byte VFO_MEMORY_LOCATION = 10;
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
@@ -93,10 +97,15 @@ void setup() {
 void loop() {
   byte jumpto = LOOP_VFO;
 
+  if (selectedMemory < VFO_MEMORY_LOCATION) {
+    jumpto = LOOP_MEMORY;
+  }
+
   while (1) {
     switch(jumpto) {
-      case LOOP_VFO:  jumpto = loopVfo(); break;
-      case LOOP_MENU: jumpto = loopMenu(); break;
+      case LOOP_VFO:    jumpto = loopVfo();    break;
+      case LOOP_MEMORY: jumpto = loopMemory(); break;
+      case LOOP_MENU:   jumpto = loopMenu();   break;
       default: jumpto = LOOP_VFO;
     }
   }

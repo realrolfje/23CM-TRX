@@ -1,8 +1,6 @@
 /*
  * 
  */
-
- 
  byte loopVfo() {
   Serial.println("--- Loop: VFO ---");
   readMemory(VFO_MEMORY_LOCATION);
@@ -29,10 +27,17 @@
       setRxFreq(rxFreqHz);
     }
   
-    /* Exit if rotary pushed */
-    if (2 == getRotaryPush()) {
+    int push = getRotaryPush();
+    if (push == 2) {
+      /* Switch to Menu if long pushed */
       writeMemory(VFO_MEMORY_LOCATION);
       return LOOP_MENU;
+    } else if (push == 1) {
+      /* Switch to memory when short pushed */
+      writeMemory(VFO_MEMORY_LOCATION);
+      selectedMemory = 0;
+      writeGlobalSettings();
+      return LOOP_MEMORY;
     }
   
     /* Handle PTT */
@@ -46,6 +51,45 @@
     }      
   }
 }
+
+byte lastSelectedMemory = selectedMemory;
+
+byte loopMemory() {
+  Serial.println("--- Loop: Memory Mode ---");
+  selectedMemory = lastSelectedMemory;
+  readMemory(selectedMemory);
+  lcd.clear();
+  setRxFreq(rxFreqHz);
+  lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
+
+  while (1) {
+    updateSmeterDisplay();
+    
+    int push = getRotaryPush();
+    if (push == 2) {
+      /* Switch to Menu if long pushed */
+      writeMemory(selectedMemory);
+      return LOOP_MENU;
+    } else if (push == 1) {
+      /* Switch to VFO when short pushed */
+      writeMemory(selectedMemory);
+      selectedMemory = VFO_MEMORY_LOCATION;
+      writeGlobalSettings();
+      return LOOP_VFO;
+    }
+
+    int up = getRotaryTurn();
+    if (up != 0) {
+      selectedMemory = constrain(selectedMemory + up, 0, VFO_MEMORY_LOCATION-1);
+      lastSelectedMemory = selectedMemory;
+
+      readMemory(selectedMemory);
+      setRxFreq(rxFreqHz);
+      lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
+    }
+  }
+}
+
 
 byte loopMenu() {
   Serial.println("--- Loop: Menu ---");

@@ -6,18 +6,27 @@
   lcd.clear();
   setRxFreq(rxFreqHz);
 
+  // Write to EEPROM every 10 seconds;
+  const int writeEvery = 10000;
+  unsigned long nextEpromWrite = millis() + writeEvery;
+  boolean unsavedChanges = false;
+
   while (1) {
     updateSmeterDisplay();
     
     /* Handle turning of the rotary encoder */
     long up = getRotaryTurn() * rasterHz;
     if (up != 0) {
+      nextEpromWrite = millis() + writeEvery; // Hold off writes
+      lcd.setCursor(15,0); lcd.print(".");    // Indicate unsaved changes
+      unsavedChanges = true;
       rxFreqHz += up;
       setRxFreq(rxFreqHz);
     }
   
     /* Exit if rotary pushed */
     if (2 == getRotaryPush()) {
+      writeAllToEEPROM();
       return LOOP_MENU;
     }
   
@@ -34,12 +43,19 @@
       stopCTCSS();
       setRxFreq(rxFreqHz);
     }
+
+    /* Write changes to EEPROM */
+    if (unsavedChanges && millis() > nextEpromWrite) {
+      writeAllToEEPROM();
+      lcd.setCursor(15,0); lcd.print(" ");
+      unsavedChanges = false;
+    }      
   }
 }
 
 byte loopMenu() {
   Serial.println("--- Loop: Menu ---");
-  byte menuitem = 0;
+  int menuitem = 0;
   boolean exit = false;
 
   while(!exit) {   
@@ -52,10 +68,8 @@ byte loopMenu() {
         
         while(!exit && menuitem == 0) {
          readRSSI();                  // Mute/unmute audio based on squelch.
-
-          byte push = getRotaryPush();
           menuitem += getRotaryTurn();
-
+          byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
             lcd.setCursor(0,0); lcd.print(" ");
@@ -82,8 +96,8 @@ byte loopMenu() {
 
         while(!exit && menuitem == 1) {
           readRSSI();                  // Mute/unmute audio based on squelch.
-          byte push = getRotaryPush();
           menuitem += getRotaryTurn();
+          byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
             lcd.setCursor(0,0); lcd.print(" ");
@@ -103,6 +117,7 @@ byte loopMenu() {
       // ------------------------------------------------ Out of bounds.
       default : menuitem = constrain(menuitem,0,1);
     }
+    // Exit menu, write all changes to EEPROM
     writeAllToEEPROM();
   }
   return LOOP_VFO;

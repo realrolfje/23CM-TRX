@@ -39,12 +39,12 @@ int getRotaryTurn() {
  * 2 - long push
  */
 byte getRotaryPush() {
-  if (!digitalRead(ROTARY_PUSH)) {
+  if (digitalRead(ROTARY_PUSH)) {
     return 0;
   }
   
   unsigned long longPush = millis() + 500;
-  while(digitalRead(ROTARY_PUSH)){
+  while(!digitalRead(ROTARY_PUSH)){
     delay(10);
   };
 

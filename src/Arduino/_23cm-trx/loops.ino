@@ -2,6 +2,7 @@
  * 
  */
  void loopVfo() {
+  Serial.println("--- Loop: VFO ---");
   lcd.clear();
   setRxFreq(rxFreqHz);
 
@@ -37,40 +38,49 @@
 }
 
 void loopMenu() {
+  Serial.println("--- Loop: Menu ---");
   byte menuitem = 0;
 
   while(1) {   
     switch(menuitem) {
       case 0 : // Squelch menu
+        Serial.println("Menu 0.");
         lcd.clear();
-        lcd.print((char) 0x10); lcd.print("Squelch level:");
-        lcd.setCursor(1,0);
-        lcd.print(" ");
-        lcd.print(squelchlevel);
-
+        lcd.setCursor(2,0); lcd.print("Squelch level");
+        lcd.setCursor(2,1); lcd.print((int)squelchlevel);
+        
         while(menuitem == 0) {
-          menuitem += getRotaryTurn();
+         readRSSI();                  // Mute/unmute audio based on squelch.
+
+          // Highlight top row
+          lcd.setCursor(0,0); lcd.print(">");
+          lcd.setCursor(0,1); lcd.print(" ");
+
           byte push = getRotaryPush();
+          menuitem += getRotaryTurn();
 
           if (push == 2) { return; } // long push, exit
           if (push == 1) {
+            Serial.println("Menu selected");
             // Menu item selected, rotary now selects squelch            
+            // Highlight bottom row
             lcd.setCursor(0,0); lcd.print(" ");
-            lcd.setCursor(1,0); lcd.print((char) 0x10);
+            lcd.setCursor(0,1); lcd.print(">");
             
             while (0 == getRotaryPush()) { // until rotary is pushed again
               readRSSI();                  // Mute/unmute audio based on squelch.
               int turn = getRotaryTurn();
               if (turn != 0) {
                 squelchlevel = constrain(squelchlevel + turn, 0, 9);                                
-                lcd.setCursor(1,1);
-                lcd.print(squelchlevel);
+                lcd.setCursor(2,1);
+                lcd.print((int)squelchlevel);
               }
             }
+            Serial.println("Menu deselected");
           }
         }
         break;
-      default : menuitem = constrain(menuitem,0,1);
+      default : menuitem = constrain(menuitem,0,0);
     }
   }
 }

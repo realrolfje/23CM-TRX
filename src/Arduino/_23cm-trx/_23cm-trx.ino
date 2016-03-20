@@ -54,12 +54,13 @@ const byte LCD_BACKLIGHT = 10;
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
 unsigned long rasterHz      = 25000;
-byte lcdBacklightBrightness = 7; // See lcd.ino
-byte squelchlevel           = 3; // Min 0, Max 9, see loop.ino
+byte lcdBacklightBrightness = 7; // Min 0, max 7, see lcd.ino
+byte squelchlevel           = 3; // Min 0, max 9, see loop.ino
 
 /* TRX related settings */
-unsigned long rxFreqHz = 1298375000;
-int subAudioIndex      = -1; // -1 is no audio. See subaudio.ino.
+unsigned long rxFreqHz = 1298375000; // Defaults to PI2NOS
+int subAudioIndex      = -1;         // -1 is no audio. See subaudio.ino.
+int repeaterShiftIndex = 2;          // Min 0, max 4, see PLL.ino
 
 /* Loop structure */
 const byte LOOP_VFO  = 0;

@@ -1,5 +1,6 @@
 /*
- * Routines for setting the PLL frequency.
+ * Routines for setting the PLL frequency. And controlling the 
+ * Receiver/transmitter.
  * 
  * The PLL is working as follows:  fvco = (P*B + A)*REFin/R
  * 
@@ -22,6 +23,10 @@
  */
 
 const unsigned long IF = 69300000; // Intermediate Frequency of receiver in Hz.
+const unsigned long minTxFreq = 1240000000; // Lower band limit
+const unsigned long maxTxFreq = 1300000000; // Upper band limit
+
+const int repeaterShift[] = {-28, -6, 0, 6, 28 };
 
 /*
  * Initialize the PLL using the "Counter Reset Method" as
@@ -82,11 +87,31 @@ void setupPLL(unsigned long raster) {
   writePLL(reg);
 }
 
+void transmit(){
+  digitalWrite(MUTE, true);
+  startCTCSS();
+  setTxFreq(rxFreqHz + repeaterShift[repeaterShiftIndex] * 1000000);
+  
+  while(isPTTPressed()) {
+    // wait
+  }
+  
+  stopCTCSS();
+  setRxFreq(rxFreqHz);
+}
+
+
+
 /*
  * Sets the transmission frequency.
  * Call this when switching from Rx to Tx
  */
 void setTxFreq(unsigned long txfreq){
+  if (txfreq > maxTxFreq || txfreq < minTxFreq ) {
+    Serial.println("Tx fequency out of bounds");
+    return;
+  }
+  
   Serial.print("Set Tx Freq: ");
   Serial.println(txfreq);
   Serial.print(" Hz.");
@@ -167,4 +192,18 @@ void writePLL(unsigned long pll_word) {
   Serial.println();
 }
 
+void printRepeaterShift() {
+  int shift = repeaterShift[repeaterShiftIndex];
+  if (shift < 10 && shift > -10) {
+    lcd.print(" "); 
+  }
+  if (repeaterShift[repeaterShiftIndex] == 0) {
+    lcd.print(" ");
+  }
+  if (repeaterShift[repeaterShiftIndex] > 0) {
+    lcd.print("+");
+  }
+  lcd.print(shift);
+  lcd.print(" Hz");
+}
 

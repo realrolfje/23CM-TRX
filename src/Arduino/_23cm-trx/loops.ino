@@ -21,7 +21,7 @@
       nextEpromWrite = millis() + writeEvery; // Hold off writes
       lcd.setCursor(15,0); lcd.print("0");    // Indicate unsaved changes
       unsavedChanges = true;
-      rxFreqHz += up;
+      rxFreqHz = constrain(rxFreqHz + up, minTxFreq, maxTxFreq);
       setRxFreq(rxFreqHz);
     }
   
@@ -32,18 +32,7 @@
     }
   
     /* Handle PTT */
-    if (isPTTPressed()) {
-      digitalWrite(MUTE, true);
-      startCTCSS();
-      setTxFreq(rxFreqHz - 28000000);
-  
-      while(isPTTPressed()) {
-        // wait
-      }
-    
-      stopCTCSS();
-      setRxFreq(rxFreqHz);
-    }
+    if (isPTTPressed()) { transmit(); }
 
     /* Write changes to EEPROM */
     if (unsavedChanges && millis() > nextEpromWrite) {
@@ -115,6 +104,32 @@ byte loopMenu() {
           }
         }
         break;
+      // ------------------------------------------------ Repeater Shift.
+      case 2:
+        lcd.clear();
+        lcd.setCursor(0,0); lcd.print("> Repeater shift");
+        lcd.setCursor(2,1); printRepeaterShift();
+
+        while(!exit && menuitem == 2) {
+          readRSSI();                  // Mute/unmute audio based on squelch.
+          menuitem = loopMenuRotary(menuitem);
+          byte push = getRotaryPush();
+          if (push == 2) { exit = true; } // long push, exit
+          if (push == 1) {
+            lcd.setCursor(0,0); lcd.print(" ");
+            lcd.setCursor(0,1); lcd.print(">"); // Rotary now selects tone
+            while (0 == getRotaryPush()) { // until rotary is pushed again
+              readRSSI();                  // Mute/unmute audio based on squelch.
+              int turn = getRotaryTurn();
+              if (turn != 0) {
+                repeaterShiftIndex = constrain(repeaterShiftIndex + turn, 0, 4); // See PLL.ino
+                lcd.setCursor(2,1); printRepeaterShift();
+              }
+            }
+            exit = true;
+          }
+        }
+        break;
       // ------------------------------------------------ Out of bounds.
       default : 
         Serial.println("Menu item out of bounds.");
@@ -128,7 +143,7 @@ byte loopMenu() {
 }
 
 int loopMenuRotary(int item) {
-  return constrain(item += getRotaryTurn(),0,1);
+  return constrain(item += getRotaryTurn(),0,2);
 }
 
 

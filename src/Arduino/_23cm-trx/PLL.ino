@@ -95,12 +95,12 @@ void transmit(){
   while(isPTTPressed()) {
     // wait
   }
-  
+  lcd.setCursor(0,1);
+  lcd.print("                ");
+
   stopCTCSS();
   setRxFreq(rxFreqHz);
 }
-
-
 
 /*
  * Sets the transmission frequency.

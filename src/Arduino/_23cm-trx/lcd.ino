@@ -42,10 +42,7 @@ void setupLCD(){
   lcd.begin(16, 2);
   createLCDCharacters();
 
-  for (byte i=0; i<255; i++){
-    delay(10);
-    analogWrite(LCD_BACKLIGHT, i);
-  }
+  incBacklightBrightness();
 }
 
 void displayFrequency(unsigned long freq){

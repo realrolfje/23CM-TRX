@@ -52,11 +52,12 @@
   }
 }
 
-byte lastSelectedMemory = selectedMemory;
+byte lastSelectedMemory = 0;
 
 byte loopMemory() {
   Serial.println("--- Loop: Memory Mode ---");
   selectedMemory = lastSelectedMemory;
+  
   readMemory(selectedMemory);
   lcd.clear();
   setRxFreq(rxFreqHz);

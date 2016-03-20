@@ -50,12 +50,7 @@ void stopCTCSS() {
   digitalWrite(SUBAUDIO, audioBit);
 }
 
-void printCTCSS() {
-  Serial.print("CTCSS index:");
-  Serial.print(subAudioIndex);
-  Serial.print(" - ");
-  Serial.println(ctcss[subAudioIndex]);
-  
+void printCTCSS() { 
   if (subAudioIndex < 0) {
     lcd.print("Off         ");
   } else {

@@ -68,7 +68,7 @@ byte loopMenu() {
         
         while(!exit && menuitem == 0) {
          readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem += getRotaryTurn();
+          menuitem = loopMenuRotary(menuitem);
           byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
@@ -96,7 +96,7 @@ byte loopMenu() {
 
         while(!exit && menuitem == 1) {
           readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem += getRotaryTurn();
+          menuitem = loopMenuRotary(menuitem);
           byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
@@ -115,12 +115,19 @@ byte loopMenu() {
         }
         break;
       // ------------------------------------------------ Out of bounds.
-      default : menuitem = constrain(menuitem,0,1);
+      default : 
+        Serial.println("Menu item out of bounds.");
+        menuitem = loopMenuRotary(menuitem);
+
     }
     // Exit menu, write all changes to EEPROM
     writeAllToEEPROM();
   }
   return LOOP_VFO;
+}
+
+int loopMenuRotary(int item) {
+  return constrain(item += getRotaryTurn(),0,1);
 }
 
 

@@ -39,7 +39,7 @@ const byte PLL_CLK       = A3;
 const byte TX_ON         = A2;
 const byte SMETER        = A1;
 const byte MUTE          = A0;
-const byte SUBAUDIO = 13;
+const byte SUBAUDIO      = 13;
 
 
 /* Connections - LCD panel */
@@ -55,10 +55,11 @@ const byte LCD_BACKLIGHT = 10;
 unsigned long tcxoRefHz     = 12800000;
 unsigned long rasterHz      = 25000;
 byte lcdBacklightBrightness = 7; // See lcd.ino
-byte squelchlevel           = 3;
+byte squelchlevel           = 3; // Min 0, Max 9, see loop.ino
 
 /* TRX related settings */
 unsigned long rxFreqHz = 1298375000;
+byte subAudioIndex     = -1; // -1 is no audio. See subaudio.ino.
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
@@ -76,13 +77,12 @@ void setup() {
   setupPLL(25000);
   setupControls();
   setupSubAudio();
-//  setTone(885);  // 88.5 Hz
   setupSmeter();
 }
 
 void loop() {
-
   loopVfo();
+  loopMenu();
 }
 
 

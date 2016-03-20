@@ -28,7 +28,7 @@ boolean isPTTPressed(){
  * Negative clicks is counter clockwise.
  */
 int getRotaryTurn() {
-  int temp = rotary_turn;
+  int temp = constrain(rotary_turn, -10, 10);
   rotary_turn = 0;
   return temp;
 }

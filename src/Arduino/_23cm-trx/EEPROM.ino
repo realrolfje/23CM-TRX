@@ -50,12 +50,12 @@ void writeGlobalSettings() {
 void readMemory(int memory) {
   if (memory < 0 || memory > VFO_MEMORY_LOCATION) { return; }
   
-  eeprompointer = 100 + memory * 8;
-  if (!checkMagicNumber()) { return; }
+  eeprompointer = 100 + memory * 10;
+  if (!checkMagicNumber()) { defaultsMemory(); return; } // 2 bytes
 
-  rxFreqHz               = EEPROMReadLong(); // 4 bytes
-  subAudioIndex          = EEPROMReadInt();  // 2 bytes
-  repeaterShiftIndex     = EEPROMReadInt();  // 2 bytes
+  rxFreqHz               = EEPROMReadLong();             // 4 bytes
+  subAudioIndex          = EEPROMReadInt();              // 2 bytes
+  repeaterShiftIndex     = EEPROMReadInt();              // 2 bytes
 
   Serial.print("Read settings from EEPROM memory ");
   Serial.print(memory);
@@ -63,16 +63,22 @@ void readMemory(int memory) {
   Serial.println(eeprompointer);
 }
 
+void defaultsMemory() {
+  rxFreqHz = 1298375000;   // Defaults to PI2NOS
+  subAudioIndex      = -1; // -1 is no audio. See subaudio.ino.
+  repeaterShiftIndex = 0;  // Min 0, max 4, see PLL.ino
+}
+
 // Writes memory settings to EEPROM
 void writeMemory(int memory) {
   if (memory < 0 || memory > VFO_MEMORY_LOCATION) { return; }
 
-  eeprompointer = 100 + memory * 8;
-  writeMagicNumber();
+  eeprompointer = 100 + memory * 10;
+  writeMagicNumber();                 // 2 bytes
 
-  EEPROMWriteLong(rxFreqHz);
-  EEPROMWriteInt(subAudioIndex);
-  EEPROMWriteInt(repeaterShiftIndex);
+  EEPROMWriteLong(rxFreqHz);          // 4 bytes
+  EEPROMWriteInt(subAudioIndex);      // 2 bytes
+  EEPROMWriteInt(repeaterShiftIndex); // 2 bytes
   
   Serial.print("Wrote settings to EEPROM memory ");
   Serial.print(memory);

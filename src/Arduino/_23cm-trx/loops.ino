@@ -165,7 +165,7 @@ byte loopMenu() {
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
             lcd.setCursor(0,0); lcd.print(" ");
-            lcd.setCursor(0,1); lcd.print(">"); // Rotary now selects tone
+            lcd.setCursor(0,1); lcd.print(">"); // Rotary now selects Shift
             while (0 == getRotaryPush()) { // until rotary is pushed again
               readRSSI();                  // Mute/unmute audio based on squelch.
               int turn = getRotaryTurn();
@@ -173,6 +173,42 @@ byte loopMenu() {
                 repeaterShiftIndex = constrain(repeaterShiftIndex + turn, 0, 4); // See PLL.ino
                 lcd.setCursor(2,1); printRepeaterShift();
               }
+            }
+            exit = true;
+          }
+        }
+        break;
+      // ------------------------------------------------ Memory Write.
+      case 3:
+        lcd.clear();
+        lcd.setCursor(0,0); lcd.print("> Memory Write ");
+
+        while(!exit && menuitem == 3) {
+          readRSSI();                  // Mute/unmute audio based on squelch.
+          menuitem = loopMenuRotary(menuitem);
+          byte push = getRotaryPush();
+          if (push == 2) { exit = true; } // long push, exit
+          if (push == 1) {
+            lcd.setCursor(0,0); lcd.print(" ");
+            lcd.setCursor(0,1); lcd.print("> Cancel"); // Rotary now selects memory
+
+            int writeToMemory = -1;
+            while (0 == getRotaryPush()) { // until rotary is pushed again
+              readRSSI();                  // Mute/unmute audio based on squelch.
+              int turn = getRotaryTurn();
+              if (turn != 0) {
+                writeToMemory = constrain(writeToMemory + turn, -1, VFO_MEMORY_LOCATION);
+                lcd.setCursor(2,1); 
+                if (writeToMemory == -1) {
+                   lcd.print("Cancel    ");
+                } else {
+                   lcd.print("VFO to M");
+                   lcd.print((int)writeToMemory);
+                }
+              }
+            }
+            if (writeToMemory >= 0 && writeToMemory < VFO_MEMORY_LOCATION) {
+              writeMemory(writeToMemory);
             }
             exit = true;
           }
@@ -192,7 +228,7 @@ byte loopMenu() {
 }
 
 int loopMenuRotary(int item) {
-  return constrain(item += getRotaryTurn(),0,2);
+  return constrain(item += getRotaryTurn(),0,3);
 }
 
 

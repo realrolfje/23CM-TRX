@@ -94,7 +94,7 @@ void setup() {
   setupSmeter();
 }
 
-void loop() {
+void loop() {  
   byte jumpto = LOOP_VFO;
 
   if (selectedMemory < VFO_MEMORY_LOCATION) {

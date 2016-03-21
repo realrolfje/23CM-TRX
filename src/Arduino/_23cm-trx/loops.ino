@@ -68,9 +68,19 @@ byte loopMemory() {
     
     int push = getRotaryPush();
     if (push == 2) {
-      /* Switch to Menu if long pushed */
-      writeMemory(selectedMemory);
-      return LOOP_MENU;
+
+      /* Scan */
+      do {
+        selectedMemory += 1;
+        if (selectedMemory == VFO_MEMORY_LOCATION) { selectedMemory = 0; }
+        readMemory(selectedMemory);
+        setRxFreq(rxFreqHz);
+
+        lastSelectedMemory = selectedMemory;
+        lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
+        delay(50); // Wait for S-meter to stabilize
+      } while (!getRotaryPush() && readRSSI() < (squelchlevel*100));
+      
     } else if (push == 1) {
       /* Switch to VFO when short pushed */
       writeMemory(selectedMemory);

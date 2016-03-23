@@ -2,10 +2,18 @@
  * Routines to sample the S signal and display an
  * S-meter on the dislay with fast attack and slow decay.
  */
+
+/* Character index of custom characters for drawing the S-meter */
+const byte METER_CHAR_0 = 0;  // :
+const byte METER_CHAR_1 = 1;  // |
+const byte METER_CHAR_2 = 2;  // ||
+const byte METER_CHAR_3 = 3;  // |||
+
+/* Update meter no sooner than 50mS after the last call */
 const unsigned long meterUpdateMillis = 50;
 
-unsigned long nextMeterUpdate = 0;
-int           currentMeter    = 0;
+unsigned long nextMeterUpdate = 0; // millis() at which the s-meter can be updated again
+int           currentMeter    = 0; // last s-meter reading (remembered for slow decay purposes)
 
 void setupSmeter(){
   pinMode(SMETER, INPUT);
@@ -92,3 +100,47 @@ void writeSMeter(int row, int pos) {
   lcd.print((char) METER_CHAR_1);
   lcd.print(min(9,currentMeter * 10 / 1023));
 }
+
+void createSMeterCharacters(){
+
+  createChar(METER_CHAR_0,
+    B00000,
+    B10000,
+    B00000,
+    B00000,
+    B00000,
+    B00000,
+    B00000,
+    B10000);
+
+  createChar(METER_CHAR_1,
+    B00000,
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+    B10000,
+    B10000);
+
+  createChar(METER_CHAR_2,
+    B00000,
+    B10000,
+    B10100,
+    B10100,
+    B10100,
+    B10100,
+    B10100,
+    B10000);
+
+  createChar(METER_CHAR_3,
+    B00000,
+    B10000,
+    B10101,
+    B10101,
+    B10101,
+    B10101,
+    B10101,
+    B10000);
+}
+

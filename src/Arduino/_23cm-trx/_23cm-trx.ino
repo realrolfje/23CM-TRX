@@ -67,9 +67,10 @@ int subAudioIndex      = -1;         // -1 is no audio. See subaudio.ino.
 int repeaterShiftIndex = 0;          // Min 0, max 4, see PLL.ino
 
 /* Loop structure */
-const byte LOOP_VFO    = 0;
-const byte LOOP_MENU   = 1;
-const byte LOOP_MEMORY = 2;
+const byte LOOP_VFO      = 0;
+const byte LOOP_MENU     = 1;
+const byte LOOP_MEMORY   = 2;
+const byte LOOP_SPECTRUM = 3;
 
 
 /* Includes and external libraries */
@@ -103,9 +104,10 @@ void loop() {
 
   while (1) {
     switch(jumpto) {
-      case LOOP_VFO:    jumpto = loopVfo();    break;
-      case LOOP_MEMORY: jumpto = loopMemory(); break;
-      case LOOP_MENU:   jumpto = loopMenu();   break;
+      case LOOP_VFO:      jumpto = loopVfo();      break;
+      case LOOP_MEMORY:   jumpto = loopMemory();   break;
+      case LOOP_SPECTRUM: jumpto = loopSpectrum(); break;
+      case LOOP_MENU:     jumpto = loopMenu();     break;
       default: jumpto = LOOP_VFO;
     }
   }

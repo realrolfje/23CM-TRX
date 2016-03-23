@@ -146,9 +146,9 @@ void setRxFreq(unsigned long rxfreq){
  * of the VCO to the given frequency.
  */
 void setVCOFreq(unsigned long freq) {
-  Serial.print("Set VCO Freq: ");
-  Serial.print(freq);
-  Serial.println(" Hz.");
+//  Serial.print("Set VCO Freq: ");
+//  Serial.print(freq);
+//  Serial.println(" Hz.");
   
   // At which raster slot is the given frequency
   unsigned long channel = freq/rasterHz;
@@ -175,12 +175,12 @@ void setVCOFreq(unsigned long freq) {
  * hundreds of microseconds.
  */
 void writePLL(unsigned long pll_word) {
-  Serial.print("PLL word: ");
-  Serial.print(pll_word);
-  Serial.print(" -> wrote bits: ");   
+//  Serial.print("PLL word: ");
+//  Serial.print(pll_word);
+//  Serial.print(" -> wrote bits: ");   
   for (int i = 0; i < 24; i++) {
     boolean msb = (pll_word & 0x800000) ? true : false;
-    Serial.print(msb);
+//    Serial.print(msb);
     digitalWrite(PLL_DATA, msb);
     digitalWrite(PLL_CLK,HIGH);
     digitalWrite(PLL_CLK,LOW);
@@ -189,7 +189,7 @@ void writePLL(unsigned long pll_word) {
 
   digitalWrite(PLL_LE,HIGH);
   digitalWrite(PLL_LE,LOW);
-  Serial.println();
+//  Serial.println();
 }
 
 void printRepeaterShift() {

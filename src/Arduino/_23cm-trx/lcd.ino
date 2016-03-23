@@ -2,11 +2,6 @@
  * All routines related to putting text on the
  * LCD panel and controlling the backlight.
  */
-const byte METER_CHAR_0 = 0;  // :
-const byte METER_CHAR_1 = 1;  // |
-const byte METER_CHAR_2 = 2;  // ||
-const byte METER_CHAR_3 = 3;  // |||
-
 #define brightnessvalues_SIZE 8
 const byte brightnessvalues[brightnessvalues_SIZE] = {5, 15, 30, 55, 105, 155, 205, 255};
 
@@ -40,7 +35,7 @@ void setupLCD(){
   pinMode(LCD_BACKLIGHT,OUTPUT);
 
   lcd.begin(16, 2);
-  createLCDCharacters();
+  createSMeterCharacters();
 
   incBacklightBrightness();
 }
@@ -52,49 +47,6 @@ void displayFrequency(unsigned long freq){
   lcd.print(freq / 1000000);
   lcd.print(".");
   lcd.print((freq % 1000000) / 1000);
-}
-
-void createLCDCharacters(){
-
-  createChar(METER_CHAR_0,
-    B00000,
-    B10000,
-    B00000,
-    B00000,
-    B00000,
-    B00000,
-    B00000,
-    B10000);
-
-  createChar(METER_CHAR_1,
-    B00000,
-    B10000,
-    B10000,
-    B10000,
-    B10000,
-    B10000,
-    B10000,
-    B10000);
-
-  createChar(METER_CHAR_2,
-    B00000,
-    B10000,
-    B10100,
-    B10100,
-    B10100,
-    B10100,
-    B10100,
-    B10000);
-
-  createChar(METER_CHAR_3,
-    B00000,
-    B10000,
-    B10101,
-    B10101,
-    B10101,
-    B10101,
-    B10101,
-    B10000);
 }
 
 /* 

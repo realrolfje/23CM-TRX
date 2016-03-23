@@ -3,6 +3,7 @@
  */
  byte loopVfo() {
   Serial.println("--- Loop: VFO ---");
+  createSMeterCharacters();
   readMemory(VFO_MEMORY_LOCATION);
 
   lcd.clear();
@@ -56,6 +57,7 @@ byte lastSelectedMemory = 0;
 
 byte loopMemory() {
   Serial.println("--- Loop: Memory Mode ---");
+  createSMeterCharacters();
   selectedMemory = lastSelectedMemory;
   
   readMemory(selectedMemory);
@@ -86,7 +88,7 @@ byte loopMemory() {
       writeMemory(selectedMemory);
       selectedMemory = VFO_MEMORY_LOCATION;
       writeGlobalSettings();
-      return LOOP_VFO;
+      return LOOP_SPECTRUM;
     }
 
     int up = getRotaryTurn();

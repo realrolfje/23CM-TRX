@@ -55,6 +55,10 @@ const byte LCD_BACKLIGHT = 10;
 
 /* Global constants */
 const byte VFO_MEMORY_LOCATION = 10; // 0-9 are user memories, 10 is used for VFO mode.
+const unsigned long minTcxoRefHz =  900000;
+const unsigned long maxTcxoRefHz = 2000000;
+
+
 
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;

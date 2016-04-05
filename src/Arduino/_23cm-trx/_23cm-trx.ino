@@ -54,7 +54,9 @@ const byte LCD_D7        =  7;
 const byte LCD_BACKLIGHT = 10;
 
 /* Global constants */
-const byte VFO_MEMORY_LOCATION = 10; // 0-9 are user memories, 10 is used for VFO mode.
+const byte VFO_MEMORY_LOCATION   = 10; // 0-9 are user memories, 10 is used for VFO mode.
+const unsigned long minTcxoRefHz =  9000000;
+const unsigned long maxTcxoRefHz = 20000000;
 
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
@@ -91,7 +93,7 @@ void setup() {
   
   setupControls();
   setupLCD();
-  setupPLL(25000);
+  setupPLL();
   setupControls();
   setupSubAudio();
   setupSmeter();

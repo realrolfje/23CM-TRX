@@ -230,6 +230,40 @@ byte loopMenu() {
           }
         }
         break;
+      // ------------------------------------------------ TCXO Frequency
+      case 4:
+        lcd.clear();
+        lcd.setCursor(0,0); lcd.print("> TCXO Frequency ");
+
+        while(!exit && menuitem == 4) {
+          readRSSI();                  // Mute/unmute audio based on squelch.
+          menuitem = loopMenuRotary(menuitem);
+          byte push = getRotaryPush();
+          if (push == 2) { exit = true; } // long push, exit
+          if (push == 1) {
+            lcd.setCursor(0,0); lcd.print(" ");
+            lcd.setCursor(0,1); lcd.print("> "); // Rotary now sets TCXO frequency
+            lcd.print(tcxoRefHz/1000);
+            lcd.print(" kHz");
+
+            while (0 == getRotaryPush()) { // until rotary is pushed again
+              readRSSI();                  // Mute/unmute audio based on squelch.
+              int turn = getRotaryTurn();
+              if (turn != 0) {
+
+                tcxoRefHz = constrain(tcxoRefHz + (turn * 100000), minTcxoRefHz, maxTcxoRefHz);
+
+                lcd.setCursor(2,1);
+                lcd.print(tcxoRefHz/1000);
+                lcd.print(" kHz ");
+              }
+            }
+
+            setupPLL();
+            exit = true;
+          }
+        }
+        break;
       // ------------------------------------------------ Out of bounds.
       default : 
         Serial.println("Menu item out of bounds.");
@@ -244,7 +278,7 @@ byte loopMenu() {
 }
 
 int loopMenuRotary(int item) {
-  return constrain(item += getRotaryTurn(),0,3);
+  return constrain(item += getRotaryTurn(),0,4);
 }
 
 

@@ -1,22 +1,24 @@
 /*
  * Firmware for the PE1JPD 23cm TRX project.
  *
- * PLEASE NOTE: SOFTWARE IS UNTESTED AND HAS NEVER RUN
- * ON A 23CM TRANSCEIVER. THIS WARNING WILL BE REMOVED
- * AFTER TESTING.
- * 
  * This is an Ardiuno version of the firmware for the 
  * popular PE1JPD 23cm Transceiver. Information on how
  * to build this transceiver and where to get the parts
  * are at: http://www.pe1jpd.nl/index.php/23cm_nbfm/
  * 
- * This software is targeted at Board version 2.2, in the original
- * software indicated as BOARD2 on line 13 of 23nbfm21.c.
+ * Given correct wiring, see https://github.com/realrolfje/23CM-TRX/tree/master/src/Arduino
+ * you can run this software on both version 1 and
+ * version 2 of the board.
  * 
  * Developed using Arduini IDE 1.6.7 on OSX 10.10.5 (Yosemite).
  * 
  * This software will give your 23cm Transceiver:
  * - An Arduino-based project, for easy modification.
+ * - Slow-decay S-meter with scale and single digit readout
+ * - VFO mode with settings menu (long-press the rotary)
+ * - Memory mode with 10 memories (long-press for memory scanning)
+ * - Bargraph mode, 5 MHz wide with last set Rx frequency
+ *   at the center of the graph.
  * 
  * Arduino project on atmega with internal oscillator
  * http://waihung.net/using-internal-oscillator-on-atmega328p/
@@ -52,7 +54,7 @@ const byte LCD_D7        =  7;
 const byte LCD_BACKLIGHT = 10;
 
 /* Global constants */
-const byte VFO_MEMORY_LOCATION = 10;
+const byte VFO_MEMORY_LOCATION = 10; // 0-9 are user memories, 10 is used for VFO mode.
 
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
@@ -112,7 +114,4 @@ void loop() {
     }
   }
 }
-
-
-
 

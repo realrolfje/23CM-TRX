@@ -251,14 +251,16 @@ byte loopMenu() {
               int turn = getRotaryTurn();
               if (turn != 0) {
 
-                tcxoRefHz = constrain(txcoRefHz + (turn * 100000), 
+                tcxoRefHz = constrain(tcxoRefHz + (turn * 100000), minTcxoRefHz, maxTcxoRefHz);
 
                 lcd.setCursor(2,1);
                 lcd.print(tcxoRefHz/1000);
-                lcd.print(" kHz");
-
-                tcxoRefHz
+                lcd.print(" kHz ");
               }
+            }
+
+            setupPLL();
+            exit = true;
           }
         }
         break;
@@ -276,7 +278,7 @@ byte loopMenu() {
 }
 
 int loopMenuRotary(int item) {
-  return constrain(item += getRotaryTurn(),0,3);
+  return constrain(item += getRotaryTurn(),0,4);
 }
 
 

@@ -32,13 +32,13 @@ const int repeaterShift[] = {-28, -6, 0, 6, 28 };
  * Initialize the PLL using the "Counter Reset Method" as
  * described on page 14 of the datasheet, ADF4113HV.pdf
  */
-void setupPLL(unsigned long raster) {
+void setupPLL() {
   
   Serial.print("Intialize PLL, raster ");
-  Serial.print(raster);
+  Serial.print(rasterHz);
+  Serial.print(" Hz, TCXO ");
+  Serial.print(tcxoRefHz);
   Serial.println(" Hz.");
-  
-  rasterHz = raster;
   
   pinMode(PLL_DATA,OUTPUT);
   pinMode(PLL_CLK, OUTPUT);

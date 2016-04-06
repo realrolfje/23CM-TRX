@@ -1,5 +1,15 @@
 
-// returns rotary
+/*
+ * Lets the user select an integer value between minimum and maximum in increments
+ * of "step". Title is printed in the top row, suffix is printed after the selected
+ * value.
+ * 
+ * Please note that "current" is passed by reference. This function will directly
+ * modify that parameter.
+ * 
+ * The return value is the relative change of the rotary encoder when the user
+ * decides to navigate away from this menu item.
+ */
 int selectInt(String title, String suffix, int& current, int minimum, int maximum, int step) {
   lcd.clear();
   lcd.setCursor(0,0); lcd.print("> "); lcd.print(title);

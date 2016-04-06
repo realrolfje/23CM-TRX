@@ -16,8 +16,13 @@ byte loopSpectrum() {
   unsigned long endFreq   = rxFreqHz + scanWidthHz / 2;
   unsigned long step = (endFreq - startFreq) / 16;
   
+  digitalWrite(MUTE, true);
+
   while (1){
     for (int x=0; x<16; x++) {
+      lcd.setCursor(x,0); // top row
+      lcd.print(".");     // Show where we are
+
       int signal = avgRSSI(startFreq + x * step,
                            startFreq + step + x * step);
 
@@ -31,11 +36,9 @@ byte loopSpectrum() {
       lcd.setCursor(x,0); // top row
       if (y>8) { lcd.print((char)graphCharacterMap[min(8,y-8)]); } 
       else { lcd.print((char)graphCharacterMap[0]); }
-      lcd.print(" "); // Show where we are
 
       lcd.setCursor(x,1); // bottom row
       lcd.print((char)graphCharacterMap[min(8,y)]);
-      lcd.print(" "); // Show where we are
     }
   }
 }
@@ -46,7 +49,7 @@ int avgRSSI(unsigned long startFreq, unsigned long endFreq) {
     if (getRotaryPush()) { return -1; };
       setVCOFreq(f - IF); // See setRxFreq() in PLL.ino
       delay(20);
-      rssi = constrain(max(rssi, readRSSI()),0,1023);
+      rssi = constrain(max(rssi, readRSSI(false)),0,1023);
   }
   if (rssi < 0) return {0}; // TODO: Workaround. Figure out why we can get negative numbers here.
   return rssi;

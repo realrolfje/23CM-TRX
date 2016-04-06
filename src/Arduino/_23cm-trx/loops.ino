@@ -121,7 +121,7 @@ byte loopMenu() {
         int turn = selectInt("Squelch level", " ", squelchlevel , 0, 9, 1);
         if (turn == 0) { exit = true; }
         else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }
-      }  break;
+      } break;
       // ------------------------------------------------ Subaudio/CTCSS menu
       case 1 : 
         lcd.clear();
@@ -211,38 +211,17 @@ byte loopMenu() {
         }
       break;
       // ------------------------------------------------ TCXO Frequency
-      case 4:
-        lcd.clear();
-        lcd.setCursor(0,0); lcd.print("> TCXO Frequency ");
-
-        while(!exit && menuitem == 4) {
-          readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem = loopMenuRotary(menuitem);
-          byte push = getRotaryPush();
-          if (push == 2) { exit = true; } // long push, exit
-          if (push == 1) {
-            lcd.setCursor(0,0); lcd.print(" ");
-            lcd.setCursor(0,1); lcd.print("> "); // Rotary now sets TCXO frequency
-            lcd.print(tcxoRefHz/1000);
-            lcd.print(" kHz");
-
-            while (0 == getRotaryPush()) { // until rotary is pushed again
-              readRSSI();                  // Mute/unmute audio based on squelch.
-              int turn = getRotaryTurn();
-              if (turn != 0) {
-
-                tcxoRefHz = constrain(tcxoRefHz + (turn * 100000), minTcxoRefHz, maxTcxoRefHz);
-
-                lcd.setCursor(2,1);
-                lcd.print(tcxoRefHz/1000);
-                lcd.print(" kHz ");
-              }
-            }
-
-            setupPLL();
-            exit = true;
-          }
+      case 4: {
+        int tcxoInt = tcxoRefHz / 1000;
+        int turn = selectInt("TCXO Frequency", " kHz", tcxoInt , minTcxoRefHz/1000, maxTcxoRefHz/1000, 100);
+        if (turn == 0) { 
+          tcxoRefHz = 1000 * long(tcxoInt);
+          setupPLL();
+          exit = true; 
+        } else { 
+          menuitem = constrain(menuitem + turn, 0, max_menu_items);
         }
+      }
       break;
       // ------------------------------------------------ Out of bounds.
       default :

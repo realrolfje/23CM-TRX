@@ -62,7 +62,7 @@ const unsigned long maxTcxoRefHz = 20000000;
 unsigned long tcxoRefHz     = 12800000;
 unsigned long rasterHz      = 25000;
 byte lcdBacklightBrightness = 7; // Min 0, max 7, see lcd.ino
-byte squelchlevel           = 3; // Min 0, max 9, see loop.ino
+int  squelchlevel           = 3; // Min 0, max 9, see loop.ino
 byte selectedMemory         = VFO_MEMORY_LOCATION; 
 
 /* TRX related settings */

@@ -22,7 +22,7 @@
  * 
  */
 
-const unsigned int magicnumber = 31239;
+const unsigned int magicnumber = 31240;
 unsigned int eeprompointer = 0;
 
 // Read global settings
@@ -33,7 +33,7 @@ void readGlobalSettings() {
   tcxoRefHz              = EEPROMReadLong();
   rasterHz               = EEPROMReadLong();
   lcdBacklightBrightness = EEPROMReadByte();
-  squelchlevel           = EEPROMReadByte();
+  squelchlevel           = EEPROMReadInt();
 }
 
 void writeGlobalSettings() {
@@ -43,7 +43,7 @@ void writeGlobalSettings() {
   EEPROMWriteLong(tcxoRefHz);
   EEPROMWriteLong(rasterHz);
   EEPROMWriteByte(lcdBacklightBrightness);
-  EEPROMWriteByte(squelchlevel);
+  EEPROMWriteInt(squelchlevel);
 }
 
 // Reads memory settings to EEPROM

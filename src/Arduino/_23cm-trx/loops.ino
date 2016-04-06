@@ -109,39 +109,18 @@ byte loopMemory() {
 
 byte loopMenu() {
   Serial.println("--- Loop: Menu ---");
-  int menuitem = 0;
+  int menuitem = 1;
   boolean exit = false;
 
-  while(!exit) {   
+  while(!exit) {
+    byte max_menu_items = 4;
     switch(menuitem) {
       // --------------------------------------------------- Squelch menu
-      case 0 : 
-        lcd.clear();
-        lcd.setCursor(0,0); lcd.print("> Squelch level");
-        lcd.setCursor(2,1); lcd.print((int)squelchlevel);
-        
-        while(!exit && menuitem == 0) {
-         readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem = loopMenuRotary(menuitem);
-          byte push = getRotaryPush();
-          if (push == 2) { exit = true; } // long push, exit
-          if (push == 1) {
-            lcd.setCursor(0,0); lcd.print(" ");
-            lcd.setCursor(0,1); lcd.print(">"); // Rotary now selects squelch            
-            
-            while (0 == getRotaryPush()) { // until rotary is pushed again
-              readRSSI();                  // Mute/unmute audio based on squelch.
-              int turn = getRotaryTurn();
-              if (turn != 0) {
-                squelchlevel = constrain(squelchlevel + turn, 0, 9);                                
-                lcd.setCursor(2,1);
-                lcd.print((int)squelchlevel);
-              }
-            }
-            exit = true;
-          }
-        }
-        break;
+      case 0 : {
+        int turn = selectInt("Squelch level", " ", squelchlevel , 0, 9, 1);
+        if (turn == 0) { exit = true; }
+        else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }
+      } break;
       // ------------------------------------------------ Subaudio/CTCSS menu
       case 1 : 
         lcd.clear();
@@ -167,9 +146,9 @@ byte loopMenu() {
             exit = true;
           }
         }
-        break;
+      break;
       // ------------------------------------------------ Repeater Shift.
-      case 2:
+      case 2: 
         lcd.clear();
         lcd.setCursor(0,0); lcd.print("> Repeater shift");
         lcd.setCursor(2,1); printRepeaterShift();
@@ -193,9 +172,9 @@ byte loopMenu() {
             exit = true;
           }
         }
-        break;
+      break;
       // ------------------------------------------------ Memory Write.
-      case 3:
+      case 3: 
         lcd.clear();
         lcd.setCursor(0,0); lcd.print("> Memory Write ");
 
@@ -229,7 +208,7 @@ byte loopMenu() {
             exit = true;
           }
         }
-        break;
+      break;
       // ------------------------------------------------ TCXO Frequency
       case 4:
         lcd.clear();
@@ -263,12 +242,11 @@ byte loopMenu() {
             exit = true;
           }
         }
-        break;
+      break;
       // ------------------------------------------------ Out of bounds.
-      default : 
+      default :
         Serial.println("Menu item out of bounds.");
         menuitem = loopMenuRotary(menuitem);
-
     }
     // Exit menu, write all changes to EEPROM
     writeGlobalSettings();
@@ -278,7 +256,7 @@ byte loopMenu() {
 }
 
 int loopMenuRotary(int item) {
-  return constrain(item += getRotaryTurn(),0,4);
+  return constrain(item + getRotaryTurn(),0,4);
 }
 
 

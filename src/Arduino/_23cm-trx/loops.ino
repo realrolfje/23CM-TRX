@@ -114,13 +114,14 @@ byte loopMenu() {
 
   while(!exit) {
     byte max_menu_items = 4;
+    Serial.print("Menu "); Serial.println(menuitem);
     switch(menuitem) {
       // --------------------------------------------------- Squelch menu
       case 0 : {
         int turn = selectInt("Squelch level", " ", squelchlevel , 0, 9, 1);
         if (turn == 0) { exit = true; }
         else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }
-      } break;
+      }  break;
       // ------------------------------------------------ Subaudio/CTCSS menu
       case 1 : 
         lcd.clear();
@@ -256,7 +257,8 @@ byte loopMenu() {
 }
 
 int loopMenuRotary(int item) {
-  return constrain(item + getRotaryTurn(),0,4);
+  item = item + getRotaryTurn();
+  return constrain(item ,0,4);
 }
 
 

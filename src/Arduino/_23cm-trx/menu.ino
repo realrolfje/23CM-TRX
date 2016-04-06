@@ -14,7 +14,6 @@ int selectInt(String title, String suffix, int& current, int minimum, int maximu
     if (push == 1) { select = true; } // Change this setting
     
     int turn = getRotaryTurn();
-    Serial.println(turn);
     if (turn != 0) { return turn; }   // Next/previous menu item.
   }
 

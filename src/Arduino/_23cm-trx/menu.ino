@@ -33,6 +33,8 @@ int selectInt(String title, String suffix, int& current, int minimum, int maximu
   /* --- Changing the menu item --- */
   while (0 == getRotaryPush()) { // until rotary is pushed again
     readRSSI();                  // Mute/unmute audio based on squelch.
+//    analogWrite(LCD_BACKLIGHT, byte(lcdBacklightBrightness)); // Smuggle: In case we change brightness
+
     int turn = getRotaryTurn();
     if (turn != 0) {
       current = constrain(current + (turn * step), minimum, maximum);

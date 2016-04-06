@@ -113,7 +113,7 @@ byte loopMenu() {
   boolean exit = false;
 
   while(!exit) {
-    byte max_menu_items = 4;
+    byte max_menu_items = 5;
     Serial.print("Menu "); Serial.println(menuitem);
     switch(menuitem) {
       // --------------------------------------------------- Squelch menu
@@ -210,8 +210,14 @@ byte loopMenu() {
           }
         }
       break;
-      // ------------------------------------------------ TCXO Frequency
+      // ------------------------------------------------ Backlight brightness
       case 4: {
+        int turn = selectInt("Backlight (N/A)", "", lcdBacklightBrightness , 25, 250, 10);
+        if (turn == 0) { exit = true; }
+        else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }       
+      }
+      // ------------------------------------------------ TCXO Frequency
+      case 5: {
         int tcxoInt = tcxoRefHz / 1000;
         int turn = selectInt("TCXO Frequency", " kHz", tcxoInt , minTcxoRefHz/1000, maxTcxoRefHz/1000, 100);
         if (turn == 0) { 

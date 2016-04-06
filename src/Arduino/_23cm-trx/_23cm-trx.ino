@@ -61,8 +61,8 @@ const unsigned long maxTcxoRefHz = 20000000;
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
 unsigned long rasterHz      = 25000;
-byte lcdBacklightBrightness = 7; // Min 0, max 7, see lcd.ino
-int  squelchlevel           = 3; // Min 0, max 9, see loop.ino
+int  lcdBacklightBrightness = 255; // Min 0, max 255
+int  squelchlevel           = 3;   // Min 0, max 9, see loop.ino
 byte selectedMemory         = VFO_MEMORY_LOCATION; 
 
 /* TRX related settings */
@@ -94,8 +94,8 @@ void setup() {
   setupControls();
   setupLCD();
   setupPLL();
-  setupControls();
   setupSubAudio();
+  setupControls();
   setupSmeter();
 }
 

@@ -2,33 +2,11 @@
  * All routines related to putting text on the
  * LCD panel and controlling the backlight.
  */
-#define brightnessvalues_SIZE 8
-const byte brightnessvalues[brightnessvalues_SIZE] = {5, 15, 30, 55, 105, 155, 205, 255};
 
-//byte getBacklightBrightness() {
-//  return lcdBacklightBrightness;
-//}
-//
-//byte setBacklightBrightness(byte brightnessIndex) {
-//  if ((brightnessIndex >= 0) && (brightnessIndex < brightnessvalues_SIZE)) {
-//    lcdBacklightBrightness = brightnessIndex;
-//  }
-//}
+void setBacklightBrightness(int brightness){
+  lcdBacklightBrightness = constrain(brightness, 0, 255);
 
-void incBacklightBrightness(){
-  if (lcdBacklightBrightness < brightnessvalues_SIZE-1){
-    lcdBacklightBrightness++;
-  }
-  analogWrite(LCD_BACKLIGHT, brightnessvalues[lcdBacklightBrightness]);
-//  EEPROMWriteBacklightValue();
-}
-
-void decBacklightBrightness(){
-  if (lcdBacklightBrightness > 0){
-    lcdBacklightBrightness--;
-  }
-  analogWrite(LCD_BACKLIGHT, brightnessvalues[lcdBacklightBrightness]);
-//  EEPROMWriteBacklightValue();
+  analogWrite(LCD_BACKLIGHT, brightness);
 }
 
 void setupLCD(){
@@ -37,7 +15,8 @@ void setupLCD(){
   lcd.begin(16, 2);
   createSMeterCharacters();
 
-  incBacklightBrightness();
+  // Todo: always on. Need to switch timers to make this work.
+  analogWrite(LCD_BACKLIGHT, 255);
 }
 
 void displayFrequency(unsigned long freq){

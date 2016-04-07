@@ -22,7 +22,7 @@
  * 
  */
 
-const unsigned int magicnumber = 31241;
+const unsigned int magicnumber = 31342;
 unsigned int eeprompointer = 0;
 
 // Read global settings
@@ -51,7 +51,7 @@ void readMemory(int memory) {
   if (memory < 0 || memory > VFO_MEMORY_LOCATION) { return; }
   
   eeprompointer = 100 + memory * 10;
-  if (!checkMagicNumber()) { defaultsMemory(); return; } // 2 bytes
+  if (!checkMagicNumber()) { defaultsMemory(memory); return; } // 2 bytes
 
   rxFreqHz               = EEPROMReadLong();             // 4 bytes
   subAudioIndex          = EEPROMReadInt();              // 2 bytes
@@ -63,10 +63,49 @@ void readMemory(int memory) {
   Serial.println(eeprompointer);
 }
 
-void defaultsMemory() {
-  rxFreqHz = 1298375000;   // Defaults to PI2NOS
-  subAudioIndex      = -1; // -1 is no audio. See subaudio.ino.
-  repeaterShiftIndex = 0;  // Min 0, max 4, see PLL.ino
+void defaultsMemory(int memory) {
+  switch (memory) {
+    case 0: rxFreqHz  = 1298375000;  // PI6NOS
+            subAudioIndex     = -1;  // -1 is no audio. See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 1: rxFreqHz  = 1298200000;  // PI6HGL
+            subAudioIndex      = 8;  // 88.5 Hz, See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 2: rxFreqHz  = 1298625000;  // PI6RTD
+            subAudioIndex      = 8;  // 88.5 Hz, See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 3: rxFreqHz  = 1298575000;  // PI6ASN
+            subAudioIndex     = -1;  // -1 is no audio. See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 4: rxFreqHz  = 1298500000;  // PI6AMF
+            subAudioIndex      = 8;  // 88.5 Hz, See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 5: rxFreqHz  = 1298400000;  // PI6EHN
+            subAudioIndex     = -1;  // -1 is no audio. See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 6: rxFreqHz  = 1298425000;  // PI6NOG
+            subAudioIndex      = 6;  // 82.5 Hz, See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    case 7: rxFreqHz  = 1242530000;  // PI6SHB
+            subAudioIndex      = 2;  // 71.9 Hz, See subaudio.ino.
+            repeaterShiftIndex = 4;  // +28 MHz, see PLL.ino
+            break;
+    case 8: rxFreqHz  = 1298700000;  // PI6HVN
+            subAudioIndex     = -1;  // -1 is no audio. See subaudio.ino.
+            repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+            break;
+    default: rxFreqHz  = 1298000000;  // Simplex
+             subAudioIndex     = -1;  // -1 is no audio. See subaudio.ino.
+             repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+             break;
+  }
 }
 
 // Writes memory settings to EEPROM

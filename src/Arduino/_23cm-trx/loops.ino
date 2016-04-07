@@ -109,7 +109,7 @@ byte loopMemory() {
 
 byte loopMenu() {
   Serial.println("--- Loop: Menu ---");
-  int menuitem = 1;
+  int menuitem = 0;
   boolean exit = false;
 
   while(!exit) {
@@ -212,10 +212,11 @@ byte loopMenu() {
       break;
       // ------------------------------------------------ Backlight brightness
       case 4: {
-        int turn = selectInt("Backlight (N/A)", "", lcdBacklightBrightness , 25, 250, 10);
+        int turn = selectInt("Backlight", "  ", lcdBacklightBrightness , 10, 250, 10);
         if (turn == 0) { exit = true; }
         else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }       
       }
+      break;
       // ------------------------------------------------ TCXO Frequency
       case 5: {
         int tcxoInt = tcxoRefHz / 1000;
@@ -243,7 +244,7 @@ byte loopMenu() {
 
 int loopMenuRotary(int item) {
   item = item + getRotaryTurn();
-  return constrain(item ,0,4);
+  return constrain(item ,0,5);
 }
 
 

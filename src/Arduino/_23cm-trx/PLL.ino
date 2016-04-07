@@ -89,16 +89,12 @@ void setupPLL() {
 
 void transmit(){
   digitalWrite(MUTE, true);
-  startCTCSS();
   setTxFreq(rxFreqHz + repeaterShift[repeaterShiftIndex] * 1000000);
-  
-  while(isPTTPressed()) {
-    // wait
-  }
+  ctcssTx();
+
+  // Done, clean up display and switch to Rx.
   lcd.setCursor(0,1);
   lcd.print("                ");
-
-  stopCTCSS();
   setRxFreq(rxFreqHz);
 }
 

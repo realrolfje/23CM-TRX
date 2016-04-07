@@ -79,7 +79,6 @@ const byte LOOP_SPECTRUM = 3;
 
 /* Includes and external libraries */
 #include <LiquidCrystal.h>
-#include <TimerOne.h>
 #include <EEPROM.h>
 
 LiquidCrystal lcd(LCD_RS, LCD_LE, 
@@ -87,7 +86,6 @@ LiquidCrystal lcd(LCD_RS, LCD_LE,
 
 void setup() {
   Serial.begin(115200);
-  
   readGlobalSettings();
   readMemory(VFO_MEMORY_LOCATION);
   

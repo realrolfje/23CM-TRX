@@ -5,8 +5,10 @@
  * 
  * Call setupSubAudio(); once in your setup();
  * 
- * To output a 88.5 Hz subaudio tone, use setTone(885);
- * To stop subaudio output, use stopCTCSS();
+ * To output a 88.5 Hz subaudio tone during transmitting, 
+ * set subAudioIndex to 8, and call ctcssTx(). This will
+ * keep flipping the subaudio port in the correct frequency
+ * until you let go of the PTT key.
  * 
  * Use freqTentHz[] as reference for valid subaudio tones.
  */
@@ -20,34 +22,26 @@ int ctcss[] = { 670,  693,  719,  744,  770,  797,  825,  854,  885,  915,
 
 void setupSubAudio() {
   pinMode(SUBAUDIO, OUTPUT); 
-  Timer1.initialize();
-  Timer1.attachInterrupt(flipAudioAubaudioPin);
-
-  stopCTCSS();
 }
 
-/* Flipping an internal bit is faster than flipping a port */
-volatile boolean audioBit=false;
-void flipAudioAubaudioPin() {
-  audioBit = !audioBit;
-  digitalWrite(SUBAUDIO, audioBit);
-}
-
-void startCTCSS() {
-  if (subAudioIndex < 0) { return; } // no tone
+void ctcssTx() {
+  // Tx without subaudio
+  if (subAudioIndex < 0) {
+    while (isPTTPressed()) { delay(10); }
+    return;
+  }
 
   int frequencyTenthHz = ctcss[subAudioIndex];
-
-  /* Period corrected for 16MHz Arduino plus ISR timer inaccuracy */
-  long halfPeriodMicroSeconds = 10012429 / (frequencyTenthHz * 2);
-  Timer1.setPeriod(halfPeriodMicroSeconds);
-  Timer1.start();
-}
-
-void stopCTCSS() {
-  Timer1.stop();
-  audioBit = false;
-  digitalWrite(SUBAUDIO, audioBit);
+  long halfperiodus = (5000000/frequencyTenthHz); // Half period in microSeconds
+  halfperiodus -= 41; // Compensate for delay added by instructions
+  
+  boolean audioBit = false;
+  while (isPTTPressed()) {
+    audioBit = !audioBit;
+    digitalWrite(SUBAUDIO, audioBit);
+    delayMicroseconds(halfperiodus);
+  }
+  digitalWrite(SUBAUDIO, false);
 }
 
 void printCTCSS() { 

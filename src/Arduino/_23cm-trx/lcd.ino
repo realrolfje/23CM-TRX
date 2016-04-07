@@ -15,8 +15,7 @@ void setupLCD(){
   lcd.begin(16, 2);
   createSMeterCharacters();
 
-  // Todo: always on. Need to switch timers to make this work.
-  analogWrite(LCD_BACKLIGHT, 255);
+  analogWrite(LCD_BACKLIGHT, lcdBacklightBrightness);
 }
 
 void displayFrequency(unsigned long freq){

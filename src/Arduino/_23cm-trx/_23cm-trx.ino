@@ -68,7 +68,7 @@ byte selectedMemory         = VFO_MEMORY_LOCATION;
 /* TRX related settings */
 unsigned long rxFreqHz = 1298375000; // Defaults to PI2NOS
 int subAudioIndex      = -1;         // -1 is no audio. See subaudio.ino.
-int repeaterShiftIndex = 0;          // Min 0, max 4, see PLL.ino
+int repeaterShiftIndex = 2;          // No shift. See PLL.ino
 
 /* Loop structure */
 const byte LOOP_VFO      = 0;

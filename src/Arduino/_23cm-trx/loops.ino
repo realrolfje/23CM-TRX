@@ -32,7 +32,7 @@
     if (push == 2) {
       /* Switch to Menu if long pushed */
       writeMemory(VFO_MEMORY_LOCATION);
-      return LOOP_MENU;
+      return LOOP_VFO_MENU;
     } else if (push == 1) {
       /* Switch to memory when short pushed */
       writeMemory(VFO_MEMORY_LOCATION);
@@ -53,7 +53,6 @@
   }
 }
 
-byte lastSelectedMemory = 0;
 
 byte loopMemory() {
   Serial.println("--- Loop: Memory Mode ---");

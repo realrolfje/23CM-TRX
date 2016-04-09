@@ -38,13 +38,25 @@ int getRotaryTurn() {
  * 1 - short push
  * 2 - long push
  */
+boolean hasReleased = true;
 byte getRotaryPush() {
   if (digitalRead(ROTARY_PUSH)) {
+    // no push
+    hasReleased = true;
     return 0;
   }
+
+  // Button is pushed. If user has not 
+  // released since last push, this 
+  // does not count as a push. Return.
+  if (!hasReleased) { return 0; }
+
+  // Fresh push event after a release
+  // so mark this as a new push.
+  hasReleased = false;
   
   unsigned long longPush = millis() + 500;
-  while(!digitalRead(ROTARY_PUSH)){
+  while(!digitalRead(ROTARY_PUSH) && millis() <= longPush){
     delay(10);
   };
 

@@ -34,16 +34,22 @@ void readGlobalSettings() {
   rasterHz               = EEPROMReadLong();
   lcdBacklightBrightness = EEPROMReadInt();
   squelchlevel           = EEPROMReadInt();
+  mode                   = EEPROMReadByte();
+  lastSelectedMemory     = EEPROMReadByte();
 }
 
 void writeGlobalSettings() {
   eeprompointer = 0;
-  writeMagicNumber();
+  writeMagicNumber();                      //  2 bytes
 
-  EEPROMWriteLong(tcxoRefHz);
-  EEPROMWriteLong(rasterHz);
-  EEPROMWriteInt(lcdBacklightBrightness);
-  EEPROMWriteInt(squelchlevel);
+  EEPROMWriteLong(tcxoRefHz);              //  4 bytes
+  EEPROMWriteLong(rasterHz);               //  4 bytes
+  EEPROMWriteInt(lcdBacklightBrightness);  //  2 bytes
+  EEPROMWriteInt(squelchlevel);            //  2 bytes
+  EEPROMWriteByte(mode);                   //  1 byte
+  EEPROMWriteByte(lastSelectedMemory);     //  1 byte
+                                           // -------
+                                           // 16 bytes total
 }
 
 // Reads memory settings to EEPROM
@@ -51,11 +57,13 @@ void readMemory(int memory) {
   if (memory < 0 || memory > VFO_MEMORY_LOCATION) { return; }
   
   eeprompointer = 100 + memory * 10;
-  if (!checkMagicNumber()) { defaultsMemory(memory); return; } // 2 bytes
+  if (!checkMagicNumber()) { defaultsMemory(memory); return; } //  2 bytes
 
-  rxFreqHz               = EEPROMReadLong();             // 4 bytes
-  subAudioIndex          = EEPROMReadInt();              // 2 bytes
-  repeaterShiftIndex     = EEPROMReadInt();              // 2 bytes
+  rxFreqHz               = EEPROMReadLong();                   //  4 bytes
+  subAudioIndex          = EEPROMReadInt();                    //  2 bytes
+  repeaterShiftIndex     = EEPROMReadInt();                    //  2 bytes
+                                                               // --------
+                                                               // 10 bytes total
 
   Serial.print("Read settings from EEPROM memory ");
   Serial.print(memory);

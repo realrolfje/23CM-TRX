@@ -58,23 +58,26 @@ const byte VFO_MEMORY_LOCATION   = 10; // 0-9 are user memories, 10 is used for 
 const unsigned long minTcxoRefHz =  9000000;
 const unsigned long maxTcxoRefHz = 20000000;
 
+/* Loop structure */
+const byte LOOP_VFO      = 0;
+const byte LOOP_VFO_MENU = 1;
+const byte LOOP_MEMORY   = 2;
+const byte LOOP_SPECTRUM = 3;
+
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
 unsigned long rasterHz      = 25000;
 int  lcdBacklightBrightness = 255; // Min 0, max 255
 int  squelchlevel           = 3;   // Min 0, max 9, see loop.ino
 byte selectedMemory         = VFO_MEMORY_LOCATION; 
+byte mode                   = LOOP_VFO;
+byte lastSelectedMemory     = 0;
 
 /* TRX related settings */
 unsigned long rxFreqHz = 1298375000; // Defaults to PI2NOS
 int subAudioIndex      = -1;         // -1 is no audio. See subaudio.ino.
 int repeaterShiftIndex = 2;          // No shift. See PLL.ino
 
-/* Loop structure */
-const byte LOOP_VFO      = 0;
-const byte LOOP_MENU     = 1;
-const byte LOOP_MEMORY   = 2;
-const byte LOOP_SPECTRUM = 3;
 
 
 /* Includes and external libraries */
@@ -98,19 +101,22 @@ void setup() {
 }
 
 void loop() {  
-  byte jumpto = LOOP_VFO;
-
-  if (selectedMemory < VFO_MEMORY_LOCATION) {
-    jumpto = LOOP_MEMORY;
-  }
-
   while (1) {
-    switch(jumpto) {
-      case LOOP_VFO:      jumpto = loopVfo();      break;
-      case LOOP_MEMORY:   jumpto = loopMemory();   break;
-      case LOOP_SPECTRUM: jumpto = loopSpectrum(); break;
-      case LOOP_MENU:     jumpto = loopMenu();     break;
-      default: jumpto = LOOP_VFO;
+    switch(mode) {
+      case LOOP_VFO:      mode = loopVfo();      break;
+      case LOOP_VFO_MENU: mode = loopMenu();     break;
+      case LOOP_MEMORY:   mode = loopMemory();   break;
+      case LOOP_SPECTRUM: mode = loopSpectrum(); break;
+      default: mode = LOOP_VFO;
+    }
+
+    // When we switch to VFO or MEMORY mode, store
+    // general settings so that the Transceiver
+    // powers up in the last mode we were in.
+    switch(mode) {
+      case LOOP_VFO:      
+      case LOOP_MEMORY:
+      writeGlobalSettings();
     }
   }
 }

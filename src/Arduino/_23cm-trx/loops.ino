@@ -204,7 +204,7 @@ byte loopVfoMenu() {
       break;
       // ------------------------------------------------ Backlight brightness
       case 4: {
-        int turn = selectInt("Backlight", "  ", lcdBacklightBrightness , 10, 250, 10);
+        int turn = selectInt("Backlight", "  ", lcdBacklightBrightness , 5, 255, 10);
         if (turn == 0) { exit = true; }
         else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }       
       }

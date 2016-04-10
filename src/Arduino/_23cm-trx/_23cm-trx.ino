@@ -59,10 +59,11 @@ const unsigned long minTcxoRefHz =  9000000;
 const unsigned long maxTcxoRefHz = 20000000;
 
 /* Loop structure */
-const byte LOOP_VFO      = 0;
-const byte LOOP_VFO_MENU = 1;
-const byte LOOP_MEMORY   = 2;
-const byte LOOP_SPECTRUM = 3;
+const byte LOOP_VFO         = 0;
+const byte LOOP_VFO_MENU    = 1;
+const byte LOOP_MEMORY      = 2;
+const byte LOOP_MEMORY_MENU = 3;
+const byte LOOP_SPECTRUM    = 4;
 
 /* Global variables and settings */
 unsigned long tcxoRefHz     = 12800000;
@@ -104,8 +105,9 @@ void loop() {
   while (1) {
     switch(mode) {
       case LOOP_VFO:      mode = loopVfo();      break;
-      case LOOP_VFO_MENU: mode = loopMenu();     break;
+      case LOOP_VFO_MENU: mode = loopVfoMenu();  break;
       case LOOP_MEMORY:   mode = loopMemory();   break;
+      case LOOP_MEMORY_MENU:   mode = loopMemoryMenu();   break;
       case LOOP_SPECTRUM: mode = loopSpectrum(); break;
       default: mode = LOOP_VFO;
     }

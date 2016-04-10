@@ -51,6 +51,7 @@
       unsavedChanges = false;
     }      
   }
+  return LOOP_VFO;
 }
 
 
@@ -68,20 +69,8 @@ byte loopMemory() {
     updateSmeterDisplay();
     
     int push = getRotaryPush();
-    if (push == 2) {
-
-      /* Scan */
-      do {
-        selectedMemory += 1;
-        if (selectedMemory == VFO_MEMORY_LOCATION) { selectedMemory = 0; }
-        readMemory(selectedMemory);
-        setRxFreq(rxFreqHz);
-
-        lastSelectedMemory = selectedMemory;
-        lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
-        delay(50); // Wait for S-meter to stabilize
-      } while (!getRotaryPush() && readRSSI() < (squelchlevel*100));
-      
+    if (push == 2) { 
+      return LOOP_MEMORY_MENU; 
     } else if (push == 1) {
       /* Switch to VFO when short pushed */
       writeMemory(selectedMemory);
@@ -98,6 +87,7 @@ byte loopMemory() {
       readMemory(selectedMemory);
       setRxFreq(rxFreqHz);
       lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
+      writeGlobalSettings();
     }
 
     /* Handle PTT */
@@ -106,13 +96,16 @@ byte loopMemory() {
 }
 
 
-byte loopMenu() {
-  Serial.println("--- Loop: Menu ---");
+byte loopVfoMenu() {
+
+  Serial.println("--- Loop: VFO Menu ---");
   int menuitem = 0;
   boolean exit = false;
 
   while(!exit) {
     byte max_menu_items = 5;
+
+    
     Serial.print("Menu "); Serial.println(menuitem);
     switch(menuitem) {
       // --------------------------------------------------- Squelch menu
@@ -129,7 +122,7 @@ byte loopMenu() {
 
         while(!exit && menuitem == 1) {
           readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem = loopMenuRotary(menuitem);
+          setMenuItem(menuitem, max_menu_items);
           byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
@@ -155,7 +148,7 @@ byte loopMenu() {
 
         while(!exit && menuitem == 2) {
           readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem = loopMenuRotary(menuitem);
+          setMenuItem(menuitem, max_menu_items);
           byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
@@ -180,7 +173,7 @@ byte loopMenu() {
 
         while(!exit && menuitem == 3) {
           readRSSI();                  // Mute/unmute audio based on squelch.
-          menuitem = loopMenuRotary(menuitem);
+          setMenuItem(menuitem, max_menu_items);
           byte push = getRotaryPush();
           if (push == 2) { exit = true; } // long push, exit
           if (push == 1) {
@@ -232,7 +225,7 @@ byte loopMenu() {
       // ------------------------------------------------ Out of bounds.
       default :
         Serial.println("Menu item out of bounds.");
-        menuitem = loopMenuRotary(menuitem);
+        setMenuItem(menuitem, max_menu_items);
     }
     // Exit menu, write all changes to EEPROM
     writeGlobalSettings();
@@ -241,9 +234,91 @@ byte loopMenu() {
   return LOOP_VFO;
 }
 
-int loopMenuRotary(int item) {
-  item = item + getRotaryTurn();
-  return constrain(item ,0,5);
+void setMenuItem(int& menuitem, byte size) {
+  menuitem = menuitem + getRotaryTurn();
+  menuitem = constrain(menuitem, 0, size);  
 }
+
+byte loopMemoryMenu() {
+  Serial.println("--- Loop: Memory Menu ---");
+  int menuitem = 0;
+  boolean exit = false;
+
+  while(!exit) {
+    byte max_menu_items = 1;
+    Serial.print("Menu "); Serial.println(menuitem);
+    switch(menuitem) {
+      // --------------------------------------------------- Squelch menu
+      case 0 : {
+        int turn = selectInt("Squelch level", " ", squelchlevel , 0, 9, 1);
+        if (turn == 0) { exit = true; }
+        else { menuitem = constrain(menuitem + turn, 0, max_menu_items); }
+      } break;
+      case 1 : {
+        lcd.clear();
+        lcd.setCursor(0,0); lcd.print("> Scan ");
+
+        while(!exit && menuitem == 1) {
+          readRSSI();                  // Mute/unmute audio based on squelch.
+          setMenuItem(menuitem, max_menu_items);
+          byte push = getRotaryPush();
+          if (push == 2) { exit = true; } // long push, exit
+          if (push == 1) {
+            lcd.setCursor(0,0); lcd.print(" ");
+            lcd.setCursor(0,1); lcd.print(">"); // Rotary now selects scan mode
+                                                  
+            String scanmode[] = {"Stop at signal", "Wait QSO end  "}; 
+            int index = 0;
+            lcd.setCursor(2,1); lcd.print(scanmode[index]);
+            while (0 == getRotaryPush()) { // until rotary is pushed again
+              readRSSI();                  // Mute/unmute audio based on squelch.
+              int turn = getRotaryTurn();
+              if (turn != 0) {
+                index = constrain(index + turn, 0, 1);
+                lcd.setCursor(2,1); lcd.print(scanmode[index]);
+              }
+            }
+
+            while (true) {
+              /* Scan for signal*/
+              lcd.setCursor(0,1); lcd.print("Scanning...     "); 
+              do {
+                selectedMemory += 1;
+                if (selectedMemory == VFO_MEMORY_LOCATION) { selectedMemory = 0; }
+                readMemory(selectedMemory);
+                setRxFreq(rxFreqHz);
+        
+                lastSelectedMemory = selectedMemory;
+                lcd.setCursor(14,0); lcd.print("M"); lcd.print(selectedMemory);
+                delay(50); // Wait for S-meter to stabilize
+                
+                if (getRotaryPush()) { return LOOP_MEMORY; }
+              } while (readRSSI() < (squelchlevel*100));
+  
+              // scan mode 0, exit
+              if (index=0) { return LOOP_MEMORY; }
+  
+              // scan mode 1, wait for silence, repeat.
+              lcd.setCursor(0,1); lcd.print("Waiting...  "); 
+              unsigned long continueAt = millis() + 20000;
+              do {
+                if (getRotaryPush() || isPTTPressed()) { return LOOP_MEMORY; }
+                if (readRSSI() >= (squelchlevel*100)) { continueAt = millis() + 20000; }
+              } while (millis() < continueAt);
+            }
+          }
+        }
+      }
+      default :
+        Serial.println("Menu item out of bounds.");
+        setMenuItem(menuitem, max_menu_items);
+    }
+  }
+  // Exit menu, write all changes to EEPROM
+  writeGlobalSettings();
+  return LOOP_MEMORY;
+}
+
+
 
 

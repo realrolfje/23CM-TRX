@@ -111,7 +111,7 @@ void defaultsMemory(int memory) {
             break;
     default: rxFreqHz  = 1298000000;  // Simplex
              subAudioIndex     = -1;  // -1 is no audio. See subaudio.ino.
-             repeaterShiftIndex = 0;  // -28 MHz, see PLL.ino
+             repeaterShiftIndex = 2;  // No shift, see PLL.ino
              break;
   }
 }

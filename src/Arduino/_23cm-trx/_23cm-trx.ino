@@ -33,6 +33,7 @@ const byte ROTARY_A      =  3;
 const byte ROTARY_B      =  2;
 const byte ROTARY_PUSH   =  9;
 const byte PTT           =  8;
+// const byte REVERSE       =  ?
 
 /* Connections - Hardware */
 const byte PLL_LE        = A5;

@@ -185,7 +185,7 @@ byte loopVfoMenu() {
               readRSSI();                  // Mute/unmute audio based on squelch.
               int turn = getRotaryTurn();
               if (turn != 0) {
-                writeToMemory = constrain(writeToMemory + turn, -1, VFO_MEMORY_LOCATION);
+                writeToMemory = constrain(writeToMemory + turn, -1, VFO_MEMORY_LOCATION - 1);
                 lcd.setCursor(2,1); 
                 if (writeToMemory == -1) {
                    lcd.print("Cancel    ");

@@ -42,6 +42,8 @@ We had the following problems/defects when building the kit:
   the output of the 78L09 (IC10) which delivers power to the VCO (IC7). Additional
   stabilization is achieved by putting an emitter-follower close to IC7. [See below for
   more information](#stabilize-vco-power) on where and how to do that.
+- With the squelch closed (no signal), the speaker still hisses a bit. This can be solved
+  by [replacing the BC547 (T2)](#solve-closed-squelch-hiss) with a BS170 and adding a resistor.
   
 How to mount the Y17c 2094 VCO
 ------------------------------------------------------------------------------------------
@@ -119,6 +121,16 @@ solved by trading a bit of voltage for a bit of stability with a BC547 emitter f
 
 The emitter should be mounted very close to the VCO to minimize pickup of noise. Cutting
 the trace between C38 and C37 is the most practical way to mount it.
+
+Solve closed squelch hiss
+------------------------------------------------------------------------------------------
+
+When the squelch is muted (nobody is transmitting), the speaker should be absolutely quiet.
+In my case, it was not, and the hiss was kind of annoying. It is caused by transistor T2 not
+completely closing. This can be solved by replacing T2 with a BS170, and placing a 100k
+resistor from the gate to ground. The BS170 is an N-channel FET and is pin-compatible with
+the BC547. The 100k resistor makes sure the gate closes and does not pick up noise when
+no voltage is applied to R20.
 
 
 
